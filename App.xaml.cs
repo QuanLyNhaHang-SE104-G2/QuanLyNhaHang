@@ -1,6 +1,8 @@
 ﻿using System.Windows;
-
 using Microsoft.Extensions.DependencyInjection;
+using QuanLyNhaHang.Data;
+using QuanLyNhaHang.Services;
+using QuanLyNhaHang.ViewModels;
 
 namespace QuanLyNhaHang;
 
@@ -23,6 +25,10 @@ public partial class App : Application
     private static IServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
+        services.AddDbContext<AppDbContext>();
+        services.AddSingleton<IDialogService, DialogService>();
+        services.AddTransient<SoDoBanViewModel>();
+        services.AddTransient<TiepNhanBanAnViewModel>();
         return services.BuildServiceProvider();
     }
 
@@ -31,5 +37,15 @@ public partial class App : Application
         Services = ConfigureServices();
 
         InitializeComponent();
+    }
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+        using (var scope = Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            context.Database.EnsureCreated();
+        }
     }
 }

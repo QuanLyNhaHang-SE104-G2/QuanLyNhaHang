@@ -23,5 +23,5 @@ public class Ban
     public string MaLoaiBan { get; set; } = null!;
 
     [ForeignKey(nameof(MaLoaiBan))]
-    public LoaiBan LoaiBan { get; set; } = null!;
+    public virtual LoaiBan LoaiBan { get; set; } = null!;
 }
