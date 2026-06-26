@@ -6,8 +6,9 @@
         xmlns:local="clr-namespace:QuanLyNhaHang.Views"
         xmlns:ext="clr-namespace:QuanLyNhaHang.Extensions"
         xmlns:vm="clr-namespace:QuanLyNhaHang.ViewModels"
+        xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
         mc:Ignorable="d"
-        Title="" Height="480" Width="550"
+        Title="" Height="400" Width="600"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
@@ -34,10 +35,11 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="160"/>
                     <ColumnDefinition Width="20"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -48,47 +50,63 @@
                     <TextBox Style="{StaticResource InputTextBoxReadOnly}" Text="{Binding MaBan, Mode=OneWay}"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,12">
+                <StackPanel Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" Margin="0,0,0,12">
                     <TextBlock Text="Tên bàn ăn" FontWeight="SemiBold" Margin="0,0,0,5"/>
                     <TextBox x:Name="TxtTenBan" Style="{StaticResource InputTextBox}" Text="{Binding TenBan, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
 
-                <!-- Row 1: Khu vực & Số chỗ ngồi -->
+                <!-- Row 1: Số chỗ ngồi & Tên loại bàn & Phụ thu -->
                 <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,12">
-                    <TextBlock Text="Khu vực" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                    <TextBox x:Name="TxtKhuVuc" Style="{StaticResource InputTextBox}" Text="{Binding KhuVuc, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,12">
                     <TextBlock Text="Số chỗ ngồi" FontWeight="SemiBold" Margin="0,0,0,5"/>
                     <TextBox x:Name="TxtSoChoNgoi" Style="{StaticResource InputTextBox}" Text="{Binding SoChoNgoi, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
 
-                <!-- Row 2: Tên loại bàn & Phụ thu -->
-                <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,12">
+                <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,12">
                     <TextBlock Text="Tên loại bàn" FontWeight="SemiBold" Margin="0,0,0,5"/>
                     <ComboBox x:Name="CbLoaiBan" Style="{StaticResource InputComboBox}" ItemsSource="{Binding LoaiBans}" SelectedValue="{Binding SelectedMaLoaiBan}" DisplayMemberPath="TenLoaiBan" SelectedValuePath="MaLoaiBan"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,12">
+                <StackPanel Grid.Row="1" Grid.Column="4" Margin="0,0,0,12">
                     <TextBlock Text="Phụ thu" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="{StaticResource TextSecondaryBrush}"/>
                     <TextBox x:Name="TxtPhuThu" Style="{StaticResource InputTextBoxReadOnly}" Text="{Binding PhuThuText, Mode=OneWay}"/>
                 </StackPanel>
 
-                <!-- Row 3: Số chỗ ngồi tối thiểu -->
-                <StackPanel Grid.Row="3" Grid.Column="0">
+                <!-- Row 2: Số chỗ ngồi tối thiểu & Khu vực -->
+                <StackPanel Grid.Row="2" Grid.Column="0">
                     <TextBlock Text="Số chỗ ngồi tối thiểu" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="{StaticResource TextSecondaryBrush}"/>
                     <TextBox x:Name="TxtSoChoNgoiToiThieu" Style="{StaticResource InputTextBoxReadOnly}" Text="{Binding SoChoNgoiToiThieu, Mode=OneWay}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="3">
+                    <TextBlock Text="Khu vực" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                    <TextBox x:Name="TxtKhuVuc" Style="{StaticResource InputTextBox}" Text="{Binding KhuVuc, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
             </Grid>
         </Border>
 
         <!-- Footer Buttons -->
         <Grid Grid.Row="2">
-            <Button x:Name="BtnAccept" Content="+ Tiếp nhận bàn ăn" Style="{StaticResource ButtonPrimary}" HorizontalAlignment="Left" Command="{Binding AcceptCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+            <Button x:Name="BtnAccept" Style="{StaticResource ButtonPrimary}" HorizontalAlignment="Left" Command="{Binding AcceptCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+                <StackPanel Orientation="Horizontal">
+                    <fa:IconBlock Icon="Plus" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Tiếp nhận bàn ăn" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Name="BtnReset" Content="Đặt lại" Style="{StaticResource ButtonSecondary}" Command="{Binding ResetCommand}" Margin="0,0,10,0"/>
-                <Button x:Name="BtnCancel" Content="Thoát" Style="{StaticResource ButtonDanger}" Command="{Binding CancelCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+                <Button x:Name="BtnReset" Style="{StaticResource ButtonSecondary}" Command="{Binding ResetCommand}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Undo" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Đặt lại" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <Button x:Name="BtnCancel" Style="{StaticResource ButtonDanger}" Command="{Binding CancelCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Times" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Thoát" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
     </Grid>
