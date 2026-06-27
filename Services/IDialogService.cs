@@ -1,7 +1,9 @@
+using System.Windows;
+
 namespace QuanLyNhaHang.Services;
 
 public interface IDialogService
 {
-    bool? ShowTiepNhanBanAnDialog();
-    bool? ShowTiepNhanMonAnDialog();
+    bool? ShowTiepNhanBanAnDialog(Window? owner);
+    bool? ShowTiepNhanMonAnDialog(Window? owner);
 }

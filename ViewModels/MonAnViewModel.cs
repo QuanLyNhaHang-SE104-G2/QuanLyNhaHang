@@ -58,9 +58,9 @@ public partial class MonAnViewModel : PaginatedViewModelBase
     }
 
     [RelayCommand]
-    private async Task AddMonAnAsync()
+    private async Task AddMonAnAsync(System.Windows.Window? owner)
     {
-        if (_dialogService.ShowTiepNhanMonAnDialog() == true)
+        if (_dialogService.ShowTiepNhanMonAnDialog(owner) == true)
         {
             await LoadDataAsync();
         }

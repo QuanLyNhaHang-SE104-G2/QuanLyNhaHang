@@ -15,7 +15,7 @@
 
         <controls:PaginatedView.ButtonContent>
             <StackPanel Orientation="Horizontal">
-                <Button Style="{StaticResource ButtonPrimary}" Command="{Binding AddTableCommand}" Margin="0,0,10,0">
+                <Button Style="{StaticResource ButtonPrimary}" Command="{Binding AddTableCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,10,0">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Icon="Plus" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
                     <TextBlock Text="Thêm bàn" VerticalAlignment="Center"/>

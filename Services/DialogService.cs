@@ -7,24 +7,20 @@ namespace QuanLyNhaHang.Services;
 
 public class DialogService : IDialogService
 {
-    public bool? ShowTiepNhanBanAnDialog()
+    public bool? ShowTiepNhanBanAnDialog(Window? owner)
     {
-        var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive) 
-                           ?? Application.Current.MainWindow;
         var dialog = new TiepNhanBanAnWindow
         {
-            Owner = activeWindow
+            Owner = owner ?? Application.Current.MainWindow
         };
         return dialog.ShowDialog();
     }
 
-    public bool? ShowTiepNhanMonAnDialog()
+    public bool? ShowTiepNhanMonAnDialog(Window? owner)
     {
-        var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive) 
-                           ?? Application.Current.MainWindow;
         var dialog = new TiepNhanMonAnWindow
         {
-            Owner = activeWindow
+            Owner = owner ?? Application.Current.MainWindow
         };
         return dialog.ShowDialog();
     }

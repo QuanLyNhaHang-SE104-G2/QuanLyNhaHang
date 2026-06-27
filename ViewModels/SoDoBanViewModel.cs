@@ -57,9 +57,9 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
     }
 
     [RelayCommand]
-    private async Task AddTableAsync()
+    private async Task AddTableAsync(System.Windows.Window? owner)
     {
-        if (_dialogService.ShowTiepNhanBanAnDialog() == true)
+        if (_dialogService.ShowTiepNhanBanAnDialog(owner) == true)
         {
             await LoadDataAsync();
         }
