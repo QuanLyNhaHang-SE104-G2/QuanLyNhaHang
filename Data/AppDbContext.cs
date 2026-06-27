@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +15,11 @@ public class AppDbContext: DbContext
     public DbSet<Ban> Ban { get; set; } = null!;
     public DbSet<LoaiBan> LoaiBan { get; set; } = null!;
     public DbSet<ThamSo> ThamSo { get; set; } = null!;
+    public DbSet<MonAn> MonAn { get; set; } = null!;
+    public DbSet<LoaiMonAn> LoaiMonAn { get; set; } = null!;
+    public DbSet<DonViTinh> DonViTinh { get; set; } = null!;
+    public DbSet<TinhTrang> TinhTrang { get; set; } = null!;
+    public DbSet<LoaiMonAnDonViTinh> LoaiMonAnDonViTinh { get; set; } = null!;
 
     public AppDbContext()
     {
@@ -28,6 +33,9 @@ public class AppDbContext: DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<LoaiMonAnDonViTinh>()
+            .HasKey(q => new { q.MaLoaiMonAn, q.MaDonViTinh });
+
         modelBuilder.Entity<LoaiBan>().HasData(
             new LoaiBan { MaLoaiBan = "Thuong", TenLoaiBan = "Thường", PhuThu = 0 },
             new LoaiBan { MaLoaiBan = "VIP", TenLoaiBan = "VIP", PhuThu = 50000 },
@@ -36,6 +44,36 @@ public class AppDbContext: DbContext
 
         modelBuilder.Entity<ThamSo>().HasData(
             new ThamSo { Id = 1, SoChoNgoiToiThieu = 2 }
+        );
+
+        modelBuilder.Entity<LoaiMonAn>().HasData(
+            new LoaiMonAn { MaLoaiMonAn = "KhaiVi", TenLoaiMonAn = "Món khai vị" },
+            new LoaiMonAn { MaLoaiMonAn = "Chinh", TenLoaiMonAn = "Món chính" },
+            new LoaiMonAn { MaLoaiMonAn = "TrangMieng", TenLoaiMonAn = "Tráng miệng" },
+            new LoaiMonAn { MaLoaiMonAn = "DoUong", TenLoaiMonAn = "Đồ uống" }
+        );
+
+        modelBuilder.Entity<DonViTinh>().HasData(
+            new DonViTinh { MaDonViTinh = "Dia", TenDonViTinh = "Đĩa" },
+            new DonViTinh { MaDonViTinh = "Phan", TenDonViTinh = "Phần" },
+            new DonViTinh { MaDonViTinh = "Chai", TenDonViTinh = "Chai" },
+            new DonViTinh { MaDonViTinh = "Ly", TenDonViTinh = "Ly" }
+        );
+
+        modelBuilder.Entity<TinhTrang>().HasData(
+            new TinhTrang { MaTinhTrang = "DangBan", TenTinhTrang = "Đang bán" },
+            new TinhTrang { MaTinhTrang = "NgungBan", TenTinhTrang = "Ngừng bán" }
+        );
+
+        modelBuilder.Entity<LoaiMonAnDonViTinh>().HasData(
+            new LoaiMonAnDonViTinh { MaLoaiMonAn = "KhaiVi", MaDonViTinh = "Dia" },
+            new LoaiMonAnDonViTinh { MaLoaiMonAn = "KhaiVi", MaDonViTinh = "Phan" },
+            new LoaiMonAnDonViTinh { MaLoaiMonAn = "Chinh", MaDonViTinh = "Dia" },
+            new LoaiMonAnDonViTinh { MaLoaiMonAn = "Chinh", MaDonViTinh = "Phan" },
+            new LoaiMonAnDonViTinh { MaLoaiMonAn = "TrangMieng", MaDonViTinh = "Dia" },
+            new LoaiMonAnDonViTinh { MaLoaiMonAn = "TrangMieng", MaDonViTinh = "Phan" },
+            new LoaiMonAnDonViTinh { MaLoaiMonAn = "DoUong", MaDonViTinh = "Chai" },
+            new LoaiMonAnDonViTinh { MaLoaiMonAn = "DoUong", MaDonViTinh = "Ly" }
         );
     }
 
