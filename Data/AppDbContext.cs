@@ -21,10 +21,6 @@ public class AppDbContext: DbContext
     public DbSet<TinhTrang> TinhTrang { get; set; } = null!;
     public DbSet<LoaiMonAnDonViTinh> LoaiMonAnDonViTinh { get; set; } = null!;
 
-    public AppDbContext()
-    {
-    }
-
     public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
     {
     }

@@ -1,7 +1,4 @@
-using System;
 using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -25,6 +22,7 @@ public abstract partial class PaginatedViewModelBase : ObservableObject
     private ObservableCollection<int> _pageNumbers = [];
 
     public int[] PageSizes { get; } = [10, 25, 50, 100];
+    protected virtual string EntityLabel => "mục";
 
     private CancellationTokenSource? _cts;
 
@@ -46,8 +44,6 @@ public abstract partial class PaginatedViewModelBase : ObservableObject
     }
 
     protected abstract Task OnLoadDataAsync(CancellationToken cancellationToken);
-
-    protected virtual string EntityLabel => "mục";
 
     protected void UpdatePaginationInfo()
     {

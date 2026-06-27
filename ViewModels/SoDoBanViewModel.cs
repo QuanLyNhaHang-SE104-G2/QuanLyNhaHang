@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,7 @@ namespace QuanLyNhaHang.ViewModels;
 
 public partial class SoDoBanViewModel : PaginatedViewModelBase
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly IDialogService _dialogService;
 
     protected override string EntityLabel => "bàn";
@@ -20,24 +19,33 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
     [ObservableProperty]
     private ObservableCollection<BanItemViewModel> _bans = [];
 
-    public SoDoBanViewModel(AppDbContext context, IDialogService dialogService)
+    public SoDoBanViewModel(IDbContextFactory<AppDbContext> dbContextFactory, IDialogService dialogService)
     {
-        _context = context;
+        _dbContextFactory = dbContextFactory;
         _dialogService = dialogService;
         _ = LoadDataAsync();
     }
 
     protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
-        TotalItems = await _context.Ban.CountAsync(cancellationToken);
+        async Task<List<Ban>> GetBansAsync()
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+            return await context.Ban
+                .GetWithIncludes()
+                .OrderBy(b => b.MaBan)
+                .GetPage(PageNumber, PageSize)
+                .ToListAsync(cancellationToken);
+        }
+
+        using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
+        {
+            TotalItems = await context.Ban.CountAsync(cancellationToken);
+        }
 
         UpdatePaginationInfo();
 
-        var rawBans = await _context.Ban
-            .GetWithIncludes()
-            .OrderBy(b => b.MaBan)
-            .GetPage(PageNumber, PageSize)
-            .ToListAsync(cancellationToken);
+        var rawBans = await GetBansAsync();
 
         Bans.Clear();
         int stt = (PageNumber - 1) * PageSize + 1;

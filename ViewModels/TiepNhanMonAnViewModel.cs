@@ -14,7 +14,7 @@ namespace QuanLyNhaHang.ViewModels;
 
 public partial class TiepNhanMonAnViewModel : ObservableValidator
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
     [ObservableProperty]
     private string _maMonAn = "";
@@ -51,9 +51,9 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
     [ObservableProperty]
     private List<TinhTrang> _tinhTrangs = [];
 
-    public TiepNhanMonAnViewModel(AppDbContext context)
+    public TiepNhanMonAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
     {
-        _context = context;
+        _dbContextFactory = dbContextFactory;
         _ = InitializeFormAsync();
     }
 
@@ -67,12 +67,17 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
     {
         ClearFields();
 
-        if (LoaiMonAns.Count == 0)
-            LoaiMonAns = await _context.LoaiMonAn.ToListAsync();
-        if (DonViTinhs.Count == 0)
-            DonViTinhs = await _context.DonViTinh.ToListAsync();
-        if (TinhTrangs.Count == 0)
-            TinhTrangs = await _context.TinhTrang.ToListAsync();
+        // Batching checks to reduce context creation round trips and lifetime
+        if (LoaiMonAns.Count == 0 || DonViTinhs.Count == 0 || TinhTrangs.Count == 0)
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            if (LoaiMonAns.Count == 0)
+                LoaiMonAns = await context.LoaiMonAn.ToListAsync();
+            if (DonViTinhs.Count == 0)
+                DonViTinhs = await context.DonViTinh.ToListAsync();
+            if (TinhTrangs.Count == 0)
+                TinhTrangs = await context.TinhTrang.ToListAsync();
+        }
 
         if (LoaiMonAns.Count > 0)
             SelectedMaLoaiMonAn = LoaiMonAns[0].MaLoaiMonAn;
@@ -86,30 +91,39 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
 
     private async Task GenerateNextMaMonAnAsync()
     {
-        var existingIds = await _context.MonAn.Select(m => m.MaMonAn).ToListAsync();
-        int maxId = 0;
-        foreach (var id in existingIds)
+        async Task<int> GetMaxIdAsync()
         {
-            if (int.TryParse(id, out int num))
-            {
-                if (num > maxId) maxId = num;
-            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+
+            return await context.MonAn
+                .Select(m => m.MaMonAn)
+                .Select(id => Convert.ToInt32(id))
+                .DefaultIfEmpty(0)
+                .MaxAsync();
         }
+
+        int maxId = await GetMaxIdAsync();
         MaMonAn = $"{(maxId + 1):D3}";
     }
 
     private async Task UpdateAllowedDonViTinhsAsync(string? maLoaiMonAn)
     {
+        async Task<List<string>> GetAllDonViTinhsAsync()
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            return await context.LoaiMonAnDonViTinh
+                .Where(q => q.MaLoaiMonAn == maLoaiMonAn)
+                .Select(q => q.MaDonViTinh)
+                .ToListAsync();
+        }
+
         if (string.IsNullOrEmpty(maLoaiMonAn))
         {
             AllowedDonViTinhs = DonViTinhs;
             return;
         }
 
-        var allowedDvtIds = await _context.LoaiMonAnDonViTinh
-            .Where(q => q.MaLoaiMonAn == maLoaiMonAn)
-            .Select(q => q.MaDonViTinh)
-            .ToListAsync();
+        var allowedDvtIds = await GetAllDonViTinhsAsync();
 
         AllowedDonViTinhs = DonViTinhs.Where(d => allowedDvtIds.Contains(d.MaDonViTinh)).ToList();
 
@@ -165,8 +179,11 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
 
         try
         {
-            await _context.MonAn.AddAsync(newMonAn);
-            await _context.SaveChangesAsync();
+            using (var context = await _dbContextFactory.CreateDbContextAsync())
+            {
+                await context.MonAn.AddAsync(newMonAn);
+                await context.SaveChangesAsync();
+            }
             MessageBox.Show("Thêm món ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
             if (window != null)
             {

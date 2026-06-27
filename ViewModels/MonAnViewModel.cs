@@ -5,13 +5,14 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using QuanLyNhaHang.Data;
 using QuanLyNhaHang.Extensions;
+using QuanLyNhaHang.Models;
 using QuanLyNhaHang.Services;
 
 namespace QuanLyNhaHang.ViewModels;
 
 public partial class MonAnViewModel : PaginatedViewModelBase
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private readonly IDialogService _dialogService;
 
     protected override string EntityLabel => "món";
@@ -22,24 +23,33 @@ public partial class MonAnViewModel : PaginatedViewModelBase
     [ObservableProperty]
     private MonAnItemViewModel? _selectedMonAn;
 
-    public MonAnViewModel(AppDbContext context, IDialogService dialogService)
+    public MonAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory, IDialogService dialogService)
     {
-        _context = context;
+        _dbContextFactory = dbContextFactory;
         _dialogService = dialogService;
         _ = LoadDataAsync();
     }
 
     protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
-        TotalItems = await _context.MonAn.CountAsync(cancellationToken);
-
+        async Task<List<MonAn>> GetMonAnsAsync()
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+            return await context.MonAn
+                .GetWithIncludes()
+                .OrderBy(m => m.MaMonAn)
+                .GetPage(PageNumber, PageSize)
+                .ToListAsync(cancellationToken);
+        }
+        
+        using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
+        {
+            TotalItems = await context.MonAn.CountAsync(cancellationToken);
+        }
+        
         UpdatePaginationInfo();
 
-        var rawMonAns = await _context.MonAn
-            .GetWithIncludes()
-            .OrderBy(m => m.MaMonAn)
-            .GetPage(PageNumber, PageSize)
-            .ToListAsync(cancellationToken);
+        var rawMonAns = await GetMonAnsAsync();
 
         MonAns.Clear();
         int stt = (PageNumber - 1) * PageSize + 1;

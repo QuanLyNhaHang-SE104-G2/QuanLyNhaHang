@@ -29,9 +29,10 @@ public partial class App : Application
     {
         var services = new ServiceCollection();
         string connString = AppDbContext.LoadConnectionStringFromConfig() ?? "Data Source=QuanLyNhaHang.db";
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseLazyLoadingProxies()
-                   .UseSqlite(connString));
+        services.AddDbContextFactory<AppDbContext>(
+            options => options
+                .UseLazyLoadingProxies()
+                .UseSqlite(connString));
 
         services.AddSingleton<IDialogService, DialogService>();
         services.AddTransient<SoDoBanViewModel>();
@@ -40,7 +41,13 @@ public partial class App : Application
         services.AddTransient<TiepNhanMonAnViewModel>();
         services.AddTransient<TraCuuBanAnViewModel>();
         services.AddTransient<MainViewModel>();
-        return services.BuildServiceProvider();
+        return services.BuildServiceProvider(
+            new ServiceProviderOptions
+            {
+                ValidateScopes = true,
+                ValidateOnBuild = true
+            }
+        );
     }
 
     public App()

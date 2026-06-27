@@ -13,7 +13,7 @@ namespace QuanLyNhaHang.ViewModels;
 
 public partial class TiepNhanBanAnViewModel : ObservableValidator
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
     [ObservableProperty]
     private string _maBan = "";
@@ -45,9 +45,9 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
 
     private decimal _phuThuVal = 0;
 
-    public TiepNhanBanAnViewModel(AppDbContext context)
+    public TiepNhanBanAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
     {
-        _context = context;
+        _dbContextFactory = dbContextFactory;
         _ = InitializeFormAsync();
     }
 
@@ -62,36 +62,34 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
     {
         ClearFields();
 
-        // Load parameter SoChoNgoiToiThieu
-        var thamSo = await _context.ThamSo.FirstOrDefaultAsync();
-        SoChoNgoiToiThieu = thamSo?.SoChoNgoiToiThieu ?? 2;
+        using (var context = await _dbContextFactory.CreateDbContextAsync())
+        {
+            SoChoNgoiToiThieu = (await context.ThamSo.FirstOrDefaultAsync())?.SoChoNgoiToiThieu ?? 2;
+            LoaiBans = await context.LoaiBan.OrderBy(l => l.PhuThu).ToListAsync();
+        }
 
-        // Load LoaiBans
-        var rawLoaiBans = await _context.LoaiBan.ToListAsync();
-        LoaiBans = rawLoaiBans.OrderBy(l => l.PhuThu).ToList();
-
-        // Select default
         if (LoaiBans.Count > 0)
         {
             SelectedMaLoaiBan = LoaiBans[0].MaLoaiBan;
             UpdatePhuThu(LoaiBans[0]);
         }
 
-        // Generate next MaBan
         await GenerateNextMaBanAsync();
     }
 
     private async Task GenerateNextMaBanAsync()
     {
-        var existingIds = await _context.Ban.Select(b => b.MaBan).ToListAsync();
-        int maxId = 0;
-        foreach (var id in existingIds)
+        async Task<int> GetMaxIdAsync()
         {
-            if (int.TryParse(id, out int num))
-            {
-                if (num > maxId) maxId = num;
-            }
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+
+            return await context.Ban
+                .Select(m => m.MaBan)
+                .Select(id => Convert.ToInt32(id))
+                .DefaultIfEmpty(0)
+                .MaxAsync();
         }
+        int maxId = await GetMaxIdAsync();
         MaBan = $"{(maxId + 1):D2}";
     }
 
@@ -142,6 +140,12 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
     [RelayCommand]
     private async Task AcceptAsync(Window? window)
     {
+        async Task<bool> TableExistsAsync()
+        {
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            return await context.Ban.AnyAsync(b => b.MaBan == MaBan);
+        }
+
         ValidateAllProperties();
 
         if (HasErrors)
@@ -154,8 +158,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
         int seats = int.Parse(SoChoNgoi);
 
         // Check if MaBan already exists
-        bool exists = await _context.Ban.AnyAsync(b => b.MaBan == MaBan);
-        if (exists)
+        if (await TableExistsAsync())
         {
             MessageBox.Show("Mã bàn ăn đã tồn tại trong hệ thống.", "Lỗi trùng lặp", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
@@ -172,8 +175,11 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
                 MaLoaiBan = SelectedMaLoaiBan
             };
 
-            await _context.Ban.AddAsync(newBan);
-            await _context.SaveChangesAsync();
+            using (var context =  await _dbContextFactory.CreateDbContextAsync())
+            {
+                await context.Ban.AddAsync(newBan);
+                await context.SaveChangesAsync();
+            }
 
             MessageBox.Show("Tiếp nhận bàn ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
             if (window != null)

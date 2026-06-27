@@ -16,7 +16,7 @@ namespace QuanLyNhaHang.ViewModels;
 
 public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
     private bool _hasSearched;
 
     protected override string EntityLabel => "bàn";
@@ -51,21 +51,29 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
     [ObservableProperty]
     private ObservableCollection<BanItemViewModel> _bans = [];
 
-    public TraCuuBanAnViewModel(AppDbContext context)
+    public TraCuuBanAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
     {
-        _context = context;
+        _dbContextFactory = dbContextFactory;
         _ = InitializeFormAsync();
     }
 
     public async Task InitializeFormAsync()
     {
-        var rawLoaiBans = await _context.LoaiBan.ToListAsync();
-        var tempLoaiBans = new List<LoaiBan>
+        async Task<List<LoaiBan>> GetAllLoaiBansAsync()
         {
-            new LoaiBan { MaLoaiBan = "All", TenLoaiBan = "Tất cả" }
-        };
-        tempLoaiBans.AddRange(rawLoaiBans.OrderBy(l => l.PhuThu));
-        LoaiBans = new ObservableCollection<LoaiBan>(tempLoaiBans);
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            return await context.LoaiBan.OrderBy(l => l.PhuThu).ToListAsync();
+        }
+
+        var rawLoaiBans = await GetAllLoaiBansAsync();
+
+        // Fixed: Single-line fluent composition using Prepend
+        LoaiBans = new(rawLoaiBans.Prepend(new LoaiBan
+        {
+            MaLoaiBan = "All",
+            TenLoaiBan = "Tất cả"
+        }));
+
         SelectedMaLoaiBan = "All";
 
         MaBan = "";
@@ -92,7 +100,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
     {
         if (!_hasSearched)
         {
-            Bans.Clear();
+            Bans = [];
             TotalItems = 0;
             UpdatePaginationInfo();
             return;
@@ -103,23 +111,30 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
         decimal? minPhuThu = decimal.TryParse(PhuThuTu, out decimal minP) ? minP : null;
         decimal? maxPhuThu = decimal.TryParse(PhuThuDen, out decimal maxP) ? maxP : null;
 
-        var query = _context.Ban
-            .GetWithIncludes()
-            .Filter(MaBan, TenBan, KhuVuc, SelectedMaLoaiBan, minSeats, maxSeats, minPhuThu, maxPhuThu);
+        List<Ban> rawBans;
 
-        TotalItems = await query.CountAsync(cancellationToken);
-        UpdatePaginationInfo();
+        using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
+        {
+            var query = context.Ban
+                .AsNoTracking() // Using AsNoTracking for read-only operations to improve performance
+                .GetWithIncludes()
+                .Filter(MaBan, TenBan, KhuVuc, SelectedMaLoaiBan, minSeats, maxSeats, minPhuThu, maxPhuThu);
 
-        var rawBans = await query
-            .OrderBy(b => b.MaBan)
-            .GetPage(PageNumber, PageSize)
-            .ToListAsync(cancellationToken);
+            TotalItems = await query.CountAsync(cancellationToken);
+            UpdatePaginationInfo();
 
-        Bans.Clear();
+            rawBans = await query
+                .OrderBy(b => b.MaBan)
+                .GetPage(PageNumber, PageSize)
+                .ToListAsync(cancellationToken);
+        }
+
+        var tempList = new List<BanItemViewModel>();
         int stt = (PageNumber - 1) * PageSize + 1;
+
         foreach (var ban in rawBans)
         {
-            Bans.Add(new BanItemViewModel
+            tempList.Add(new BanItemViewModel
             {
                 STT = stt++,
                 MaBan = ban.MaBan,
@@ -131,6 +146,8 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
                 PhuThuText = $"{(ban.LoaiBan?.PhuThu ?? 0):N0} VND"
             });
         }
+
+        Bans = new ObservableCollection<BanItemViewModel>(tempList);
     }
 
     [RelayCommand]
