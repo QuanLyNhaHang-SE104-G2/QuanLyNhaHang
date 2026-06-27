@@ -64,4 +64,10 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
             await LoadDataAsync();
         }
     }
+
+    [RelayCommand]
+    private void SearchTable(System.Windows.Window? owner)
+    {
+        _dialogService.ShowTraCuuBanAnDialog(owner);
+    }
 }

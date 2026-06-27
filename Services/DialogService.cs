@@ -24,4 +24,13 @@ public class DialogService : IDialogService
         };
         return dialog.ShowDialog();
     }
+
+    public void ShowTraCuuBanAnDialog(Window? owner)
+    {
+        var dialog = new TraCuuBanAnWindow
+        {
+            Owner = owner ?? Application.Current.MainWindow
+        };
+        dialog.ShowDialog();
+    }
 }

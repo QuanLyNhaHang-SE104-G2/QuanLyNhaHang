@@ -23,7 +23,8 @@
             </Button>
                 <Button Content="Xóa" Style="{StaticResource ButtonDanger}" Margin="0,0,10,0"/>
                 <Button Content="Sửa" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"/>
-                <Button Content="Tra cứu" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"/>
+                <Button Content="Tra cứu" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"
+                        Command="{Binding SearchTableCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
             </StackPanel>
         </controls:PaginatedView.ButtonContent>
 

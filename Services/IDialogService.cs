@@ -6,4 +6,5 @@ public interface IDialogService
 {
     bool? ShowTiepNhanBanAnDialog(Window? owner);
     bool? ShowTiepNhanMonAnDialog(Window? owner);
+    void ShowTraCuuBanAnDialog(Window? owner);
 }
