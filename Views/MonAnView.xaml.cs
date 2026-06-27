@@ -1,16 +1,12 @@
-using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using QuanLyNhaHang.ViewModels;
 
 namespace QuanLyNhaHang.Views;
 
-/// <summary>
-/// Interaction logic for SoDoBanView.xaml
-/// </summary>
-public partial class SoDoBanView : UserControl
+public partial class MonAnView : UserControl
 {
-    public SoDoBanView()
+    public MonAnView()
     {
         InitializeComponent();
     }

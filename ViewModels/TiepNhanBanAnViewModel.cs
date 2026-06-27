@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,28 +11,30 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public partial class TiepNhanBanAnViewModel : ObservableObject
+public partial class TiepNhanBanAnViewModel : ObservableValidator
 {
     private readonly AppDbContext _context;
-
-
 
     [ObservableProperty]
     private string _maBan = "";
 
     [ObservableProperty]
+    [Required(ErrorMessage = "Tên bàn ăn không được để trống.")]
     private string _tenBan = "";
 
     [ObservableProperty]
+    [CustomValidation(typeof(TiepNhanBanAnViewModel), nameof(ValidateSoChoNgoi))]
     private string _soChoNgoi = "";
 
     [ObservableProperty]
     private int _soChoNgoiToiThieu;
 
     [ObservableProperty]
+    [Required(ErrorMessage = "Khu vực không được để trống.")]
     private string _khuVuc = "";
 
     [ObservableProperty]
+    [Required(ErrorMessage = "Vui lòng chọn loại bàn.")]
     private string _selectedMaLoaiBan = "";
 
     [ObservableProperty]
@@ -113,39 +116,37 @@ public partial class TiepNhanBanAnViewModel : ObservableObject
         await ResetFieldsAsync();
     }
 
+    public static ValidationResult? ValidateSoChoNgoi(string value, ValidationContext context)
+    {
+        var instance = (TiepNhanBanAnViewModel)context.ObjectInstance;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return new ValidationResult("Số chỗ ngồi không được để trống.");
+        }
+        if (!int.TryParse(value, out int seats))
+        {
+            return new ValidationResult("Số chỗ ngồi phải là số nguyên hợp lệ.");
+        }
+        if (seats < instance.SoChoNgoiToiThieu)
+        {
+            return new ValidationResult($"Số chỗ ngồi phải lớn hơn hoặc bằng số chỗ ngồi tối thiểu ({instance.SoChoNgoiToiThieu}).");
+        }
+        return ValidationResult.Success;
+    }
+
     [RelayCommand]
     private async Task AcceptAsync(Window? window)
     {
-        // Validation
-        if (string.IsNullOrWhiteSpace(TenBan))
+        ValidateAllProperties();
+
+        if (HasErrors)
         {
-            MessageBox.Show("Tên bàn ăn không được để trống.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+            var errors = GetErrors().Select(e => e.ErrorMessage).ToList();
+            MessageBox.Show(string.Join("\n", errors), "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(KhuVuc))
-        {
-            MessageBox.Show("Khu vực không được để trống.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        if (!int.TryParse(SoChoNgoi, out int seats))
-        {
-            MessageBox.Show("Số chỗ ngồi phải là số nguyên hợp lệ.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        if (seats < SoChoNgoiToiThieu)
-        {
-            MessageBox.Show($"Số chỗ ngồi phải lớn hơn hoặc bằng số chỗ ngồi tối thiểu ({SoChoNgoiToiThieu}).", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        if (string.IsNullOrEmpty(SelectedMaLoaiBan))
-        {
-            MessageBox.Show("Vui lòng chọn loại bàn.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
+        int seats = int.Parse(SoChoNgoi);
 
         // Check if MaBan already exists
         bool exists = await _context.Ban.AnyAsync(b => b.MaBan == MaBan);

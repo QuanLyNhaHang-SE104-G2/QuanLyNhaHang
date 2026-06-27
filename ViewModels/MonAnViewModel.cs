@@ -1,0 +1,68 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.EntityFrameworkCore;
+using QuanLyNhaHang.Data;
+using QuanLyNhaHang.Extensions;
+using QuanLyNhaHang.Services;
+
+namespace QuanLyNhaHang.ViewModels;
+
+public partial class MonAnViewModel : PaginatedViewModelBase
+{
+    private readonly AppDbContext _context;
+    private readonly IDialogService _dialogService;
+
+    protected override string EntityLabel => "món";
+
+    [ObservableProperty]
+    private ObservableCollection<MonAnDisplayViewModel> _monAns = [];
+
+    [ObservableProperty]
+    private MonAnDisplayViewModel? _selectedMonAn;
+
+    public MonAnViewModel(AppDbContext context, IDialogService dialogService)
+    {
+        _context = context;
+        _dialogService = dialogService;
+        _ = LoadDataAsync();
+    }
+
+    public override async Task LoadDataAsync()
+    {
+        TotalItems = await _context.MonAn.CountAsync();
+
+        UpdatePaginationInfo();
+
+        var rawMonAns = await _context.MonAn
+            .GetWithIncludes()
+            .OrderBy(m => m.MaMonAn)
+            .GetPage(PageNumber, PageSize)
+            .ToListAsync();
+
+        MonAns.Clear();
+        int stt = (PageNumber - 1) * PageSize + 1;
+        foreach (var monAn in rawMonAns)
+        {
+            MonAns.Add(new MonAnDisplayViewModel
+            {
+                STT = stt++,
+                MaMonAn = monAn.MaMonAn,
+                TenMonAn = monAn.TenMonAn,
+                TenLoaiMonAn = monAn.LoaiMonAn?.TenLoaiMonAn ?? "",
+                TenDonViTinh = monAn.DonViTinh?.TenDonViTinh ?? "",
+                DonGiaText = $"{monAn.DonGia:N0} d",
+                TenTinhTrang = monAn.TinhTrang?.TenTinhTrang ?? ""
+            });
+        }
+    }
+
+    [RelayCommand]
+    private async Task AddMonAnAsync()
+    {
+        if (_dialogService.ShowThemMonAnDialog() == true)
+        {
+            await LoadDataAsync();
+        }
+    }
+}

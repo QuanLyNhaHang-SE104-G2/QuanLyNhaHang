@@ -6,7 +6,7 @@ namespace QuanLyNhaHang.Extensions;
 
 public static class MonAnExtensions
 {
-    public static IQueryable<MonAn> GetMonAnWithIncludes(this IQueryable<MonAn> query)
+    public static IQueryable<MonAn> GetWithIncludes(this IQueryable<MonAn> query)
     {
         return query
             .Include(m => m.LoaiMonAn)

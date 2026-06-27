@@ -77,10 +77,37 @@ public class AppDbContext: DbContext
         );
     }
 
+    public static string? LoadConnectionStringFromConfig()
+    {
+        try
+        {
+            string configPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
+            if (System.IO.File.Exists(configPath))
+            {
+                string json = System.IO.File.ReadAllText(configPath);
+                using var doc = System.Text.Json.JsonDocument.Parse(json);
+                if (doc.RootElement.TryGetProperty("ConnectionStrings", out var connStrings) &&
+                    connStrings.TryGetProperty("DefaultConnection", out var defaultConn))
+                {
+                    return defaultConn.GetString();
+                }
+            }
+        }
+        catch
+        {
+            // Ignore and fallback
+        }
+        return null;
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder
-            .UseLazyLoadingProxies()
-            .UseSqlite("Data Source=QuanLyNhaHang.db");
+        if (!optionsBuilder.IsConfigured)
+        {
+            string connString = LoadConnectionStringFromConfig() ?? "Data Source=QuanLyNhaHang.db";
+            optionsBuilder
+                .UseLazyLoadingProxies()
+                .UseSqlite(connString);
+        }
     }
 }

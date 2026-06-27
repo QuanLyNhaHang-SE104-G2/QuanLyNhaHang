@@ -2,12 +2,22 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:QuanLyNhaHang"
+             xmlns:vm="clr-namespace:QuanLyNhaHang.ViewModels"
+             xmlns:views="clr-namespace:QuanLyNhaHang.Views"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Styles/GeneralStyles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Styles/PaginatedViewStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type vm:SoDoBanViewModel}">
+                <views:SoDoBanView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:MonAnViewModel}">
+                <views:MonAnView />
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

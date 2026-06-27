@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Windows;
+using QuanLyNhaHang.ViewModels;
 using QuanLyNhaHang.Views;
 
 namespace QuanLyNhaHang.Services;
@@ -11,6 +12,17 @@ public class DialogService : IDialogService
         var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive) 
                            ?? Application.Current.MainWindow;
         var dialog = new TiepNhanBanAnWindow
+        {
+            Owner = activeWindow
+        };
+        return dialog.ShowDialog();
+    }
+
+    public bool? ShowThemMonAnDialog()
+    {
+        var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive) 
+                           ?? Application.Current.MainWindow;
+        var dialog = new ThemMonAnWindow
         {
             Owner = activeWindow
         };

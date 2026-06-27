@@ -33,11 +33,57 @@
 
                 <!-- Navigation Menu -->
                 <StackPanel Grid.Row="1" Margin="10,0,10,0">
-                    <!-- Active menu item highlighting the current visible view (Sơ đồ bàn) -->
-                    <Button Style="{StaticResource SidebarButtonActive}">
+                    <!-- So do ban navigation button -->
+                    <Button Command="{Binding NavigateToSoDoBanCommand}" HorizontalContentAlignment="Left" Padding="15,10" Cursor="Hand" BorderThickness="0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource ControlBaseStyle}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Style.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="6"/>
+                                    </Style>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSoDoBanActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource ActiveMenuBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
                             <fa:IconBlock Icon="Table" FontSize="16" Width="20"/>
-                            <TextBlock Text="Sơ đồ bàn" VerticalAlignment="Center" Margin="10,0,0,0" FontWeight="SemiBold"/>
+                            <TextBlock Text="Sơ đồ bàn" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Thuc don navigation button -->
+                    <Button Command="{Binding NavigateToThucDonCommand}" Margin="0,5,0,0" HorizontalContentAlignment="Left" Padding="15,10" Cursor="Hand" BorderThickness="0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource ControlBaseStyle}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Style.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="6"/>
+                                    </Style>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsThucDonActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource ActiveMenuBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconBlock Icon="Utensils" FontSize="16" Width="20"/>
+                            <TextBlock Text="Thực đơn" VerticalAlignment="Center" Margin="10,0,0,0"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -45,6 +91,6 @@
         </Border>
 
         <!-- Dynamic Content Control Panel -->
-        <ContentControl x:Name="MainContentControl" Grid.Column="1"/>
+        <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}"/>
     </Grid>
 </Window>

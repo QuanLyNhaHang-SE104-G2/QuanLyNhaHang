@@ -1,8 +1,11 @@
-﻿using System.Windows;
+using System.Windows;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using QuanLyNhaHang.Data;
 using QuanLyNhaHang.Services;
 using QuanLyNhaHang.ViewModels;
+using QuanLyNhaHang.Views;
 
 namespace QuanLyNhaHang;
 
@@ -25,10 +28,17 @@ public partial class App : Application
     private static IServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
-        services.AddDbContext<AppDbContext>();
+        string connString = AppDbContext.LoadConnectionStringFromConfig() ?? "Data Source=QuanLyNhaHang.db";
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseLazyLoadingProxies()
+                   .UseSqlite(connString));
+
         services.AddSingleton<IDialogService, DialogService>();
         services.AddTransient<SoDoBanViewModel>();
         services.AddTransient<TiepNhanBanAnViewModel>();
+        services.AddTransient<MonAnViewModel>();
+        services.AddTransient<ThemMonAnViewModel>();
+        services.AddTransient<MainViewModel>();
         return services.BuildServiceProvider();
     }
 
@@ -45,7 +55,7 @@ public partial class App : Application
         using (var scope = Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
         }
     }
 }
