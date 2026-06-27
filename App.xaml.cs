@@ -37,7 +37,7 @@ public partial class App : Application
         services.AddTransient<SoDoBanViewModel>();
         services.AddTransient<TiepNhanBanAnViewModel>();
         services.AddTransient<MonAnViewModel>();
-        services.AddTransient<ThemMonAnViewModel>();
+        services.AddTransient<TiepNhanMonAnViewModel>();
         services.AddTransient<MainViewModel>();
         return services.BuildServiceProvider();
     }

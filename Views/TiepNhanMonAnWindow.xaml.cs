@@ -4,11 +4,11 @@ using QuanLyNhaHang.ViewModels;
 
 namespace QuanLyNhaHang.Views;
 
-public partial class ThemMonAnWindow : Window
+public partial class TiepNhanMonAnWindow : Window
 {
-    public ThemMonAnWindow()
+    public TiepNhanMonAnWindow()
     {
         InitializeComponent();
-        DataContext = App.Current.Services.GetRequiredService<ThemMonAnViewModel>();
+        DataContext = App.Current.Services.GetRequiredService<TiepNhanMonAnViewModel>();
     }
 }

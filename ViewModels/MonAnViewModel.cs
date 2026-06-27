@@ -51,7 +51,7 @@ public partial class MonAnViewModel : PaginatedViewModelBase
                 TenMonAn = monAn.TenMonAn,
                 TenLoaiMonAn = monAn.LoaiMonAn?.TenLoaiMonAn ?? "",
                 TenDonViTinh = monAn.DonViTinh?.TenDonViTinh ?? "",
-                DonGiaText = $"{monAn.DonGia:N0} d",
+                DonGiaText = $"{monAn.DonGia:N0} VND",
                 TenTinhTrang = monAn.TinhTrang?.TenTinhTrang ?? ""
             });
         }
@@ -60,7 +60,7 @@ public partial class MonAnViewModel : PaginatedViewModelBase
     [RelayCommand]
     private async Task AddMonAnAsync()
     {
-        if (_dialogService.ShowThemMonAnDialog() == true)
+        if (_dialogService.ShowTiepNhanMonAnDialog() == true)
         {
             await LoadDataAsync();
         }

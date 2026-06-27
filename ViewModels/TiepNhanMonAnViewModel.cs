@@ -12,7 +12,7 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public partial class ThemMonAnViewModel : ObservableValidator
+public partial class TiepNhanMonAnViewModel : ObservableValidator
 {
     private readonly AppDbContext _context;
 
@@ -24,7 +24,7 @@ public partial class ThemMonAnViewModel : ObservableValidator
     private string _tenMonAn = "";
 
     [ObservableProperty]
-    [CustomValidation(typeof(ThemMonAnViewModel), nameof(ValidateDonGia))]
+    [CustomValidation(typeof(TiepNhanMonAnViewModel), nameof(ValidateDonGia))]
     private string _donGia = "";
 
     [ObservableProperty]
@@ -51,7 +51,7 @@ public partial class ThemMonAnViewModel : ObservableValidator
     [ObservableProperty]
     private List<TinhTrang> _tinhTrangs = [];
 
-    public ThemMonAnViewModel(AppDbContext context)
+    public TiepNhanMonAnViewModel(AppDbContext context)
     {
         _context = context;
         _ = ResetFieldsAsync();

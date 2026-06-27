@@ -18,11 +18,11 @@ public class DialogService : IDialogService
         return dialog.ShowDialog();
     }
 
-    public bool? ShowThemMonAnDialog()
+    public bool? ShowTiepNhanMonAnDialog()
     {
         var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive) 
                            ?? Application.Current.MainWindow;
-        var dialog = new ThemMonAnWindow
+        var dialog = new TiepNhanMonAnWindow
         {
             Owner = activeWindow
         };

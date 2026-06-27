@@ -51,7 +51,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
                 SoChoNgoi = ban.SoChoNgoi,
                 SoChoNgoiText = $"{ban.SoChoNgoi} khách",
                 TenLoaiBan = ban.LoaiBan?.TenLoaiBan ?? "",
-                PhuThuText = $"{(ban.LoaiBan?.PhuThu ?? 0):N0} VNĐ"
+                PhuThuText = $"{(ban.LoaiBan?.PhuThu ?? 0):N0} VND"
             });
         }
     }

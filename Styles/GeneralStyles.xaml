@@ -73,6 +73,12 @@
                 <Setter Property="CornerRadius" Value="4"/>
             </Style>
         </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" 
+                        Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="TextBox" x:Key="InputTextBoxReadOnly" BasedOn="{StaticResource InputTextBox}">
@@ -87,6 +93,12 @@
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Background" Value="White"/>
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" 
+                        Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- Sidebar Navigation Buttons -->
