@@ -102,7 +102,6 @@ public class AppDbContext: DbContext
         {
             string connString = LoadConnectionStringFromConfig() ?? "Data Source=QuanLyNhaHang.db";
             optionsBuilder
-                .UseLazyLoadingProxies()
                 .UseSqlite(connString);
         }
     }

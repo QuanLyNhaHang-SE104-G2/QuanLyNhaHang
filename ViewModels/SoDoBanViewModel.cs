@@ -32,6 +32,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
         {
             using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
             return await context.Ban
+                .AsNoTrackingWithIdentityResolution()
                 .GetWithIncludes()
                 .OrderBy(b => b.MaBan)
                 .GetPage(PageNumber, PageSize)
@@ -40,7 +41,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
 
         using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
         {
-            TotalItems = await context.Ban.CountAsync(cancellationToken);
+            TotalItems = await context.Ban.AsNoTracking().CountAsync(cancellationToken);
         }
 
         UpdatePaginationInfo();

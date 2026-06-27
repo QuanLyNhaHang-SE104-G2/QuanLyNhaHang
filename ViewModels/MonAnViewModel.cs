@@ -36,6 +36,7 @@ public partial class MonAnViewModel : PaginatedViewModelBase
         {
             using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
             return await context.MonAn
+                .AsNoTrackingWithIdentityResolution()
                 .GetWithIncludes()
                 .OrderBy(m => m.MaMonAn)
                 .GetPage(PageNumber, PageSize)
@@ -44,7 +45,7 @@ public partial class MonAnViewModel : PaginatedViewModelBase
         
         using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
         {
-            TotalItems = await context.MonAn.CountAsync(cancellationToken);
+            TotalItems = await context.MonAn.AsNoTracking().CountAsync(cancellationToken);
         }
         
         UpdatePaginationInfo();

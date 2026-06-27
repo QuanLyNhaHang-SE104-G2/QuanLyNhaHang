@@ -72,11 +72,11 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
             if (LoaiMonAns.Count == 0)
-                LoaiMonAns = await context.LoaiMonAn.ToListAsync();
+                LoaiMonAns = await context.LoaiMonAn.AsNoTracking().ToListAsync();
             if (DonViTinhs.Count == 0)
-                DonViTinhs = await context.DonViTinh.ToListAsync();
+                DonViTinhs = await context.DonViTinh.AsNoTracking().ToListAsync();
             if (TinhTrangs.Count == 0)
-                TinhTrangs = await context.TinhTrang.ToListAsync();
+                TinhTrangs = await context.TinhTrang.AsNoTracking().ToListAsync();
         }
 
         if (LoaiMonAns.Count > 0)
@@ -112,6 +112,7 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
             return await context.LoaiMonAnDonViTinh
+                .AsNoTracking()
                 .Where(q => q.MaLoaiMonAn == maLoaiMonAn)
                 .Select(q => q.MaDonViTinh)
                 .ToListAsync();

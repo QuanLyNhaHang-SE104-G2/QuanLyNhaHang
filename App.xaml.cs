@@ -31,7 +31,6 @@ public partial class App : Application
         string connString = AppDbContext.LoadConnectionStringFromConfig() ?? "Data Source=QuanLyNhaHang.db";
         services.AddDbContextFactory<AppDbContext>(
             options => options
-                .UseLazyLoadingProxies()
                 .UseSqlite(connString));
 
         services.AddSingleton<IDialogService, DialogService>();

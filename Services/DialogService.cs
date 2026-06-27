@@ -1,5 +1,6 @@
-using System.Linq;
+using System;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using QuanLyNhaHang.ViewModels;
 using QuanLyNhaHang.Views;
 
@@ -13,7 +14,19 @@ public class DialogService : IDialogService
         {
             Owner = owner ?? Application.Current.MainWindow
         };
-        return dialog.ShowDialog();
+        var viewModel = App.Current.Services.GetRequiredService<TiepNhanBanAnViewModel>();
+        dialog.DataContext = viewModel;
+        try
+        {
+            return dialog.ShowDialog();
+        }
+        finally
+        {
+            if (viewModel is IDisposable disposableVM)
+            {
+                disposableVM.Dispose();
+            }
+        }
     }
 
     public bool? ShowTiepNhanMonAnDialog(Window? owner)
@@ -22,7 +35,19 @@ public class DialogService : IDialogService
         {
             Owner = owner ?? Application.Current.MainWindow
         };
-        return dialog.ShowDialog();
+        var viewModel = App.Current.Services.GetRequiredService<TiepNhanMonAnViewModel>();
+        dialog.DataContext = viewModel;
+        try
+        {
+            return dialog.ShowDialog();
+        }
+        finally
+        {
+            if (viewModel is IDisposable disposableVM)
+            {
+                disposableVM.Dispose();
+            }
+        }
     }
 
     public void ShowTraCuuBanAnDialog(Window? owner)
@@ -31,6 +56,18 @@ public class DialogService : IDialogService
         {
             Owner = owner ?? Application.Current.MainWindow
         };
-        dialog.ShowDialog();
+        var viewModel = App.Current.Services.GetRequiredService<TraCuuBanAnViewModel>();
+        dialog.DataContext = viewModel;
+        try
+        {
+            dialog.ShowDialog();
+        }
+        finally
+        {
+            if (viewModel is IDisposable disposableVM)
+            {
+                disposableVM.Dispose();
+            }
+        }
     }
 }

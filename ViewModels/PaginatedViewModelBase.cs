@@ -4,8 +4,10 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public abstract partial class PaginatedViewModelBase : ObservableObject
+public abstract partial class PaginatedViewModelBase : ObservableObject, IDisposable
 {
+    private bool _disposed;
+
     [ObservableProperty]
     private int _pageSize = 10;
 
@@ -120,5 +122,19 @@ public abstract partial class PaginatedViewModelBase : ObservableObject
         {
             _ = LoadDataAsync();
         }
+    }
+
+    public virtual void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = null;
+
+        _disposed = true;
     }
 }

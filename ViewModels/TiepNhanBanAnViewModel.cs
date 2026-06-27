@@ -64,8 +64,8 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
 
         using (var context = await _dbContextFactory.CreateDbContextAsync())
         {
-            SoChoNgoiToiThieu = (await context.ThamSo.FirstOrDefaultAsync())?.SoChoNgoiToiThieu ?? 2;
-            LoaiBans = await context.LoaiBan.OrderBy(l => l.PhuThu).ToListAsync();
+            SoChoNgoiToiThieu = (await context.ThamSo.AsNoTracking().FirstOrDefaultAsync())?.SoChoNgoiToiThieu ?? 2;
+            LoaiBans = await context.LoaiBan.AsNoTracking().OrderBy(l => l.PhuThu).ToListAsync();
         }
 
         if (LoaiBans.Count > 0)

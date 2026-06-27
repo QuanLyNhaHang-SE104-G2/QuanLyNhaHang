@@ -62,7 +62,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
         async Task<List<LoaiBan>> GetAllLoaiBansAsync()
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            return await context.LoaiBan.OrderBy(l => l.PhuThu).ToListAsync();
+            return await context.LoaiBan.AsNoTracking().OrderBy(l => l.PhuThu).ToListAsync();
         }
 
         var rawLoaiBans = await GetAllLoaiBansAsync();
@@ -116,7 +116,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
         using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
         {
             var query = context.Ban
-                .AsNoTracking() // Using AsNoTracking for read-only operations to improve performance
+                .AsNoTrackingWithIdentityResolution()
                 .GetWithIncludes()
                 .Filter(MaBan, TenBan, KhuVuc, SelectedMaLoaiBan, minSeats, maxSeats, minPhuThu, maxPhuThu);
 
