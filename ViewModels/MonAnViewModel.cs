@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +29,9 @@ public partial class MonAnViewModel : PaginatedViewModelBase
         _ = LoadDataAsync();
     }
 
-    protected override async Task OnLoadDataAsync()
+    protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
-        TotalItems = await _context.MonAn.CountAsync();
+        TotalItems = await _context.MonAn.CountAsync(cancellationToken);
 
         UpdatePaginationInfo();
 
@@ -38,7 +39,7 @@ public partial class MonAnViewModel : PaginatedViewModelBase
             .GetWithIncludes()
             .OrderBy(m => m.MaMonAn)
             .GetPage(PageNumber, PageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         MonAns.Clear();
         int stt = (PageNumber - 1) * PageSize + 1;

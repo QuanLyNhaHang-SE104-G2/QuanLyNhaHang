@@ -1,5 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -24,68 +26,62 @@ public abstract partial class PaginatedViewModelBase : ObservableObject
 
     public int[] PageSizes { get; } = [10, 25, 50, 100];
 
-    private bool _isLoading;
-    private bool _isUpdatingPagination;
+    private CancellationTokenSource? _cts;
 
     public async Task LoadDataAsync()
     {
-        if (_isLoading) return;
-        _isLoading = true;
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = new CancellationTokenSource();
+        var token = _cts.Token;
+
         try
         {
-            await OnLoadDataAsync();
+            await OnLoadDataAsync(token);
         }
-        finally
+        catch (OperationCanceledException)
         {
-            _isLoading = false;
+            // Ignore cancellation
         }
     }
 
-    protected abstract Task OnLoadDataAsync();
+    protected abstract Task OnLoadDataAsync(CancellationToken cancellationToken);
 
     protected virtual string EntityLabel => "mục";
 
     protected void UpdatePaginationInfo()
     {
-        _isUpdatingPagination = true;
-        try
+        int totalPages = (int)Math.Ceiling((double)TotalItems / PageSize);
+        if (totalPages < 1) totalPages = 1;
+
+        int currentCount = PageNumbers.Count;
+        if (currentCount < totalPages)
         {
-            int totalPages = (int)Math.Ceiling((double)TotalItems / PageSize);
-            if (totalPages < 1) totalPages = 1;
-
-            int currentCount = PageNumbers.Count;
-            if (currentCount < totalPages)
+            for (int i = currentCount + 1; i <= totalPages; i++)
             {
-                for (int i = currentCount + 1; i <= totalPages; i++)
-                {
-                    PageNumbers.Add(i);
-                }
+                PageNumbers.Add(i);
             }
-            else if (currentCount > totalPages)
-            {
-                for (int i = currentCount - 1; i >= totalPages; i--)
-                {
-                    PageNumbers.RemoveAt(i);
-                }
-            }
-
-            if (PageNumber < 1)
-            {
-                PageNumber = 1;
-            }
-            else if (PageNumber > totalPages)
-            {
-                PageNumber = totalPages;
-            }
-
-            int start = TotalItems == 0 ? 0 : (PageNumber - 1) * PageSize + 1;
-            int end = Math.Min(PageNumber * PageSize, TotalItems);
-            TotalInfoText = $"Hiển thị {start}-{end} trên tổng số {TotalItems} {EntityLabel}";
         }
-        finally
+        else if (currentCount > totalPages)
         {
-            _isUpdatingPagination = false;
+            for (int i = currentCount - 1; i >= totalPages; i--)
+            {
+                PageNumbers.RemoveAt(i);
+            }
         }
+
+        if (PageNumber < 1)
+        {
+            PageNumber = 1;
+        }
+        else if (PageNumber > totalPages)
+        {
+            PageNumber = totalPages;
+        }
+
+        int start = TotalItems == 0 ? 0 : (PageNumber - 1) * PageSize + 1;
+        int end = Math.Min(PageNumber * PageSize, TotalItems);
+        TotalInfoText = $"Hiển thị {start}-{end} trên tổng số {TotalItems} {EntityLabel}";
     }
 
     [RelayCommand]
@@ -124,7 +120,7 @@ public abstract partial class PaginatedViewModelBase : ObservableObject
 
     partial void OnPageNumberChanged(int value)
     {
-        if (value >= 1 && !_isUpdatingPagination)
+        if (value >= 1)
         {
             _ = LoadDataAsync();
         }

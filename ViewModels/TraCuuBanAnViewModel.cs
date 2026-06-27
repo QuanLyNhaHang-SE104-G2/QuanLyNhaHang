@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -87,7 +88,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
         await LoadDataAsync();
     }
 
-    protected override async Task OnLoadDataAsync()
+    protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
         if (!_hasSearched)
         {
@@ -106,13 +107,13 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
             .GetWithIncludes()
             .Filter(MaBan, TenBan, KhuVuc, SelectedMaLoaiBan, minSeats, maxSeats, minPhuThu, maxPhuThu);
 
-        TotalItems = await query.CountAsync();
+        TotalItems = await query.CountAsync(cancellationToken);
         UpdatePaginationInfo();
 
         var rawBans = await query
             .OrderBy(b => b.MaBan)
             .GetPage(PageNumber, PageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         Bans.Clear();
         int stt = (PageNumber - 1) * PageSize + 1;

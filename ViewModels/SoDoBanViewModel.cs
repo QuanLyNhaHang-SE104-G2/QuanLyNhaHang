@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +27,9 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
         _ = LoadDataAsync();
     }
 
-    protected override async Task OnLoadDataAsync()
+    protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
-        TotalItems = await _context.Ban.CountAsync();
+        TotalItems = await _context.Ban.CountAsync(cancellationToken);
 
         UpdatePaginationInfo();
 
@@ -36,7 +37,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
             .GetWithIncludes()
             .OrderBy(b => b.MaBan)
             .GetPage(PageNumber, PageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         Bans.Clear();
         int stt = (PageNumber - 1) * PageSize + 1;
