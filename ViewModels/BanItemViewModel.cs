@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public partial class BanViewModel : ObservableObject
+public partial class BanItemViewModel : ObservableObject
 {
     [ObservableProperty]
     private int _sTT;

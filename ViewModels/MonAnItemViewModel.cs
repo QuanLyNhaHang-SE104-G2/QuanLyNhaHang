@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public partial class MonAnDisplayViewModel : ObservableObject
+public partial class MonAnItemViewModel : ObservableObject
 {
     [ObservableProperty]
     private int _sTT;

@@ -16,10 +16,10 @@ public partial class MonAnViewModel : PaginatedViewModelBase
     protected override string EntityLabel => "món";
 
     [ObservableProperty]
-    private ObservableCollection<MonAnDisplayViewModel> _monAns = [];
+    private ObservableCollection<MonAnItemViewModel> _monAns = [];
 
     [ObservableProperty]
-    private MonAnDisplayViewModel? _selectedMonAn;
+    private MonAnItemViewModel? _selectedMonAn;
 
     public MonAnViewModel(AppDbContext context, IDialogService dialogService)
     {
@@ -44,7 +44,7 @@ public partial class MonAnViewModel : PaginatedViewModelBase
         int stt = (PageNumber - 1) * PageSize + 1;
         foreach (var monAn in rawMonAns)
         {
-            MonAns.Add(new MonAnDisplayViewModel
+            MonAns.Add(new MonAnItemViewModel
             {
                 STT = stt++,
                 MaMonAn = monAn.MaMonAn,

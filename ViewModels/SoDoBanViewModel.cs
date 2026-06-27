@@ -17,7 +17,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
     protected override string EntityLabel => "bàn";
 
     [ObservableProperty]
-    private ObservableCollection<BanViewModel> _bans = [];
+    private ObservableCollection<BanItemViewModel> _bans = [];
 
     public SoDoBanViewModel(AppDbContext context, IDialogService dialogService)
     {
@@ -33,7 +33,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
         UpdatePaginationInfo();
 
         var rawBans = await _context.Ban
-            .Include(b => b.LoaiBan)
+            .GetWithIncludes()
             .OrderBy(b => b.MaBan)
             .GetPage(PageNumber, PageSize)
             .ToListAsync();
@@ -42,7 +42,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
         int stt = (PageNumber - 1) * PageSize + 1;
         foreach (var ban in rawBans)
         {
-            Bans.Add(new BanViewModel
+            Bans.Add(new BanItemViewModel
             {
                 STT = stt++,
                 MaBan = ban.MaBan,
