@@ -48,14 +48,19 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
     public TiepNhanBanAnViewModel(AppDbContext context)
     {
         _context = context;
-        _ = ResetFieldsAsync();
+        _ = InitializeFormAsync();
     }
 
-    private async Task ResetFieldsAsync()
+    private void ClearFields()
     {
         TenBan = "";
         SoChoNgoi = "";
         KhuVuc = "";
+    }
+
+    public async Task InitializeFormAsync()
+    {
+        ClearFields();
 
         // Load parameter SoChoNgoiToiThieu
         var thamSo = await _context.ThamSo.FirstOrDefaultAsync();
@@ -95,12 +100,12 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
         if (loaiBan != null)
         {
             _phuThuVal = loaiBan.PhuThu;
-            PhuThuText = $"{_phuThuVal:N0} VNĐ";
+            PhuThuText = $"{_phuThuVal:N0} VND";
         }
         else
         {
             _phuThuVal = 0;
-            PhuThuText = "0 VNĐ";
+            PhuThuText = "0 VND";
         }
     }
 
@@ -113,7 +118,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
     [RelayCommand]
     private async Task ResetAsync()
     {
-        await ResetFieldsAsync();
+        await InitializeFormAsync();
     }
 
     public static ValidationResult? ValidateSoChoNgoi(string value, ValidationContext context)

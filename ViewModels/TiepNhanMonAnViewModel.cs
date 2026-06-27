@@ -54,13 +54,18 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
     public TiepNhanMonAnViewModel(AppDbContext context)
     {
         _context = context;
-        _ = ResetFieldsAsync();
+        _ = InitializeFormAsync();
     }
 
-    private async Task ResetFieldsAsync()
+    private void ClearFields()
     {
         TenMonAn = "";
         DonGia = "";
+    }
+
+    public async Task InitializeFormAsync()
+    {
+        ClearFields();
 
         if (LoaiMonAns.Count == 0)
             LoaiMonAns = await _context.LoaiMonAn.ToListAsync();
@@ -122,7 +127,7 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
     [RelayCommand]
     private async Task ResetAsync()
     {
-        await ResetFieldsAsync();
+        await InitializeFormAsync();
     }
 
     public static ValidationResult? ValidateDonGia(string value, ValidationContext context)
