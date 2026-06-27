@@ -28,7 +28,7 @@ public partial class MonAnViewModel : PaginatedViewModelBase
         _ = LoadDataAsync();
     }
 
-    public override async Task LoadDataAsync()
+    protected override async Task OnLoadDataAsync()
     {
         TotalItems = await _context.MonAn.CountAsync();
 

@@ -26,7 +26,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
         _ = LoadDataAsync();
     }
 
-    public override async Task LoadDataAsync()
+    protected override async Task OnLoadDataAsync()
     {
         TotalItems = await _context.Ban.CountAsync();
 

@@ -87,7 +87,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
         await LoadDataAsync();
     }
 
-    public override async Task LoadDataAsync()
+    protected override async Task OnLoadDataAsync()
     {
         if (!_hasSearched)
         {
