@@ -70,4 +70,46 @@ public class DialogService : IDialogService
             }
         }
     }
+
+    public bool? ShowTiepNhanPhieuGoiMonDialog(Window? owner)
+    {
+        var dialog = new TiepNhanPhieuGoiMonWindow
+        {
+            Owner = owner ?? Application.Current.MainWindow
+        };
+        var viewModel = App.Current.Services.GetRequiredService<TiepNhanPhieuGoiMonViewModel>();
+        dialog.DataContext = viewModel;
+        try
+        {
+            return dialog.ShowDialog();
+        }
+        finally
+        {
+            if (viewModel is IDisposable disposableVM)
+            {
+                disposableVM.Dispose();
+            }
+        }
+    }
+
+    public void ShowTraCuuPhieuGoiMonDialog(Window? owner)
+    {
+        var dialog = new TraCuuPhieuGoiMonWindow
+        {
+            Owner = owner ?? Application.Current.MainWindow
+        };
+        var viewModel = App.Current.Services.GetRequiredService<TraCuuPhieuGoiMonViewModel>();
+        dialog.DataContext = viewModel;
+        try
+        {
+            dialog.ShowDialog();
+        }
+        finally
+        {
+            if (viewModel is IDisposable disposableVM)
+            {
+                disposableVM.Dispose();
+            }
+        }
+    }
 }
