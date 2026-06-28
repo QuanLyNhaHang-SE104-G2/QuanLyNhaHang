@@ -46,10 +46,12 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
     private string _phuThuDen = "";
 
     [ObservableProperty]
-    private ObservableCollection<LoaiBan> _loaiBans = [];
+    private ObservableCollection<LoaiBanOption> _loaiBans = [];
 
     [ObservableProperty]
     private ObservableCollection<BanItemViewModel> _bans = [];
+
+    public record LoaiBanOption(string MaLoaiBan, string TenLoaiBan);
 
     public TraCuuBanAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
     {
@@ -61,20 +63,20 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
 
     public async Task InitializeFormAsync()
     {
-        async Task<List<LoaiBan>> GetAllLoaiBansAsync()
+        async Task<List<LoaiBanOption>> GetAllLoaiBansAsync()
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            return await context.LoaiBan.AsNoTracking().OrderBy(l => l.PhuThu).ToListAsync();
+            return await context.LoaiBan
+                .AsNoTracking()
+                .OrderBy(l => l.PhuThu)
+                .Select(l => new LoaiBanOption(l.MaLoaiBan, l.TenLoaiBan))
+                .ToListAsync();
         }
 
         var rawLoaiBans = await GetAllLoaiBansAsync();
 
-        // Fixed: Single-line fluent composition using Prepend
-        LoaiBans = new(rawLoaiBans.Prepend(new LoaiBan
-        {
-            MaLoaiBan = "All",
-            TenLoaiBan = "Tất cả"
-        }));
+        LoaiBans = new ObservableCollection<LoaiBanOption>(
+            rawLoaiBans.Prepend(new LoaiBanOption("All", "Tất cả")));
 
         SelectedMaLoaiBan = "All";
 
