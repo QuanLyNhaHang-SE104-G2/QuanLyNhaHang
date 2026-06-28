@@ -95,11 +95,13 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
 
-            return await context.MonAn
+            // Perform maximum evaluation natively on the string data type at the database level
+            string? maxMa = await context.MonAn
                 .Select(m => m.MaMonAn)
-                .Select(id => Convert.ToInt32(id))
-                .DefaultIfEmpty(0)
                 .MaxAsync();
+
+            // Parse the resulting string value locally on the client layer
+            return maxMa != null && int.TryParse(maxMa, out int id) ? id : 0;
         }
 
         int maxId = await GetMaxIdAsync();

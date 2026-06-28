@@ -83,11 +83,11 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
 
-            return await context.Ban
+            string? maxId = await context.Ban
                 .Select(m => m.MaBan)
-                .Select(id => Convert.ToInt32(id))
-                .DefaultIfEmpty(0)
                 .MaxAsync();
+
+            return maxId != null && int.TryParse(maxId, out int id) ? id : 0;
         }
         int maxId = await GetMaxIdAsync();
         MaBan = $"{(maxId + 1):D2}";
