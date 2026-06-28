@@ -12,63 +12,6 @@
         ShowInTaskbar="False"
         Background="White">
     
-    <Window.Resources>
-        <Style x:Key="PopupPaginatedViewStyle" TargetType="controls:PaginatedView">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:PaginatedView">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <!-- Content Area -->
-                            <ContentPresenter Grid.Row="0" Content="{TemplateBinding MainContent}"/>
-
-                            <!-- Pagination Footer -->
-                            <Grid Grid.Row="1" Margin="0,15,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock Text="Số dòng:" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,5,0"/>
-                                    <ComboBox Width="80" Style="{StaticResource InputComboBox}"
-                                              ItemsSource="{TemplateBinding PageSizes}"
-                                              SelectedItem="{Binding PageSize, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
-                                </StackPanel>
-
-                                <TextBlock Grid.Column="1"
-                                           Text="{TemplateBinding TotalInfoText}"
-                                           Foreground="{StaticResource TextSecondaryBrush}"
-                                           VerticalAlignment="Center" Margin="15,0,0,0"/>
-
-                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Button Style="{StaticResource ButtonSecondary}" Padding="12,6" Margin="0,0,5,0"
-                                            Command="{TemplateBinding PrevPageCommand}">
-                                        <fa:IconBlock Icon="ChevronLeft" FontSize="12"/>
-                                    </Button>
-
-                                    <ComboBox Width="70" Style="{StaticResource InputComboBox}" Margin="0,0,5,0"
-                                              ItemsSource="{TemplateBinding PageNumbers}"
-                                              SelectedItem="{Binding PageNumber, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
-
-                                    <Button Style="{StaticResource ButtonSecondary}" Padding="12,6"
-                                            Command="{TemplateBinding NextPageCommand}">
-                                        <fa:IconBlock Icon="ChevronRight" FontSize="12"/>
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <!-- Header -->
