@@ -7,8 +7,8 @@ namespace QuanLyNhaHang.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     private readonly SoDoBanViewModel _soDoBanViewModel;
-    private readonly MonAnViewModel _monAnViewModel;
     private readonly OrderViewModel _orderViewModel;
+    private readonly MonAnViewModel _monAnViewModel;
 
     [ObservableProperty]
     private object? _currentViewModel;
@@ -22,11 +22,11 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isPosActive;
 
-    public MainViewModel(SoDoBanViewModel soDoBanViewModel, MonAnViewModel monAnViewModel, OrderViewModel orderViewModel)
+    public MainViewModel(SoDoBanViewModel soDoBanViewModel, OrderViewModel orderViewModel, MonAnViewModel monAnViewModel)
     {
         _soDoBanViewModel = soDoBanViewModel;
-        _monAnViewModel = monAnViewModel;
         _orderViewModel = orderViewModel;
+        _monAnViewModel = monAnViewModel;
         CurrentViewModel = _soDoBanViewModel;
     }
 
@@ -41,16 +41,6 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void NavigateToThucDon()
-    {
-        CurrentViewModel = _monAnViewModel;
-        IsSoDoBanActive = false;
-        IsThucDonActive = true;
-        IsPosActive = false;
-        _monAnViewModel.LoadDataAsync().SafeFireAndForget();
-    }
-
-    [RelayCommand]
     private void NavigateToPos()
     {
         CurrentViewModel = _orderViewModel;
@@ -58,5 +48,15 @@ public partial class MainViewModel : ObservableObject
         IsThucDonActive = false;
         IsPosActive = true;
         _orderViewModel.LoadDataAsync().SafeFireAndForget();
+    }
+
+    [RelayCommand]
+    private void NavigateToThucDon()
+    {
+        CurrentViewModel = _monAnViewModel;
+        IsSoDoBanActive = false;
+        IsThucDonActive = true;
+        IsPosActive = false;
+        _monAnViewModel.LoadDataAsync().SafeFireAndForget();
     }
 }
