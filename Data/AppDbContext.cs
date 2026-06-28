@@ -20,6 +20,10 @@ public class AppDbContext: DbContext
     public DbSet<DonViTinh> DonViTinh { get; set; } = null!;
     public DbSet<TinhTrang> TinhTrang { get; set; } = null!;
     public DbSet<LoaiMonAnDonViTinh> LoaiMonAnDonViTinh { get; set; } = null!;
+    public DbSet<TrangThai> TrangThai { get; set; } = null!;
+    public DbSet<NhanVien> NhanVien { get; set; } = null!;
+    public DbSet<PhieuGoiMon> PhieuGoiMon { get; set; } = null!;
+    public DbSet<CTGoiMon> CTGoiMon { get; set; } = null!;
 
     public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
     {
@@ -31,6 +35,9 @@ public class AppDbContext: DbContext
 
         modelBuilder.Entity<LoaiMonAnDonViTinh>()
             .HasKey(q => new { q.MaLoaiMonAn, q.MaDonViTinh });
+
+        modelBuilder.Entity<CTGoiMon>()
+            .HasKey(c => new { c.MaPhieuGoiMon, c.MaMonAn });
 
         modelBuilder.Entity<LoaiBan>().HasData(
             new LoaiBan { MaLoaiBan = "Thuong", TenLoaiBan = "Thường", PhuThu = 0 },
@@ -70,6 +77,19 @@ public class AppDbContext: DbContext
             new LoaiMonAnDonViTinh { MaLoaiMonAn = "TrangMieng", MaDonViTinh = "Phan" },
             new LoaiMonAnDonViTinh { MaLoaiMonAn = "DoUong", MaDonViTinh = "Chai" },
             new LoaiMonAnDonViTinh { MaLoaiMonAn = "DoUong", MaDonViTinh = "Ly" }
+        );
+
+        modelBuilder.Entity<TrangThai>().HasData(
+            new TrangThai { MaTrangThai = "ChoBep", TenTrangThai = "Chờ bếp" },
+            new TrangThai { MaTrangThai = "DangCheBien", TenTrangThai = "Đang chế biến" },
+            new TrangThai { MaTrangThai = "DaPhucVu", TenTrangThai = "Đã phục vụ" },
+            new TrangThai { MaTrangThai = "Huy", TenTrangThai = "Huỷ" }
+        );
+
+        modelBuilder.Entity<NhanVien>().HasData(
+            new NhanVien { MaNhanVien = "NV001", TenNhanVien = "Mai P." },
+            new NhanVien { MaNhanVien = "NV002", TenNhanVien = "Hoàng T." },
+            new NhanVien { MaNhanVien = "NV003", TenNhanVien = "Linh N." }
         );
     }
 

@@ -10,6 +10,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Styles/GeneralStyles.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Styles/PaginatedViewStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Styles/ControlTableStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type vm:SoDoBanViewModel}">
@@ -17,6 +18,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:MonAnViewModel}">
                 <views:MonAnView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:OrderViewModel}">
+                <views:OrderView />
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
