@@ -52,6 +52,8 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
     [ObservableProperty]
     private List<TinhTrang> _tinhTrangs = [];
 
+    private List<(string MaLoaiMonAn, string MaDonViTinh)> _allLoaiMonAnDvt = [];
+
     public TiepNhanMonAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
@@ -70,16 +72,16 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
     {
         ClearFields();
 
-        // Batching checks to reduce context creation round trips and lifetime
-        if (LoaiMonAns.Count == 0 || DonViTinhs.Count == 0 || TinhTrangs.Count == 0)
+        using (var context = await _dbContextFactory.CreateDbContextAsync())
         {
-            using var context = await _dbContextFactory.CreateDbContextAsync();
-            if (LoaiMonAns.Count == 0)
-                LoaiMonAns = await context.LoaiMonAn.AsNoTracking().ToListAsync();
-            if (DonViTinhs.Count == 0)
-                DonViTinhs = await context.DonViTinh.AsNoTracking().ToListAsync();
-            if (TinhTrangs.Count == 0)
-                TinhTrangs = await context.TinhTrang.AsNoTracking().ToListAsync();
+            LoaiMonAns = await context.LoaiMonAn.AsNoTracking().ToListAsync();
+            DonViTinhs = await context.DonViTinh.AsNoTracking().ToListAsync();
+            TinhTrangs = await context.TinhTrang.AsNoTracking().ToListAsync();
+            _allLoaiMonAnDvt = await context.LoaiMonAnDonViTinh
+                .AsNoTracking()
+                .Select(q => new { q.MaLoaiMonAn, q.MaDonViTinh })
+                .ToListAsync()
+                .ContinueWith(t => t.Result.Select(x => (x.MaLoaiMonAn, x.MaDonViTinh)).ToList());
         }
 
         if (LoaiMonAns.Count > 0)
@@ -88,7 +90,7 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
         if (TinhTrangs.Count > 0)
             SelectedMaTinhTrang = TinhTrangs[0].MaTinhTrang;
 
-        await UpdateAllowedDonViTinhsAsync(SelectedMaLoaiMonAn);
+        UpdateAllowedDonViTinhs(SelectedMaLoaiMonAn);
         await GenerateNextMaMonAnAsync();
     }
 
@@ -109,25 +111,18 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
         MaMonAn = maxId + 1;
     }
 
-    private async Task UpdateAllowedDonViTinhsAsync(string? maLoaiMonAn)
+    private void UpdateAllowedDonViTinhs(string? maLoaiMonAn)
     {
-        async Task<List<string>> GetAllDonViTinhsAsync()
-        {
-            using var context = await _dbContextFactory.CreateDbContextAsync();
-            return await context.LoaiMonAnDonViTinh
-                .AsNoTracking()
-                .Where(q => q.MaLoaiMonAn == maLoaiMonAn)
-                .Select(q => q.MaDonViTinh)
-                .ToListAsync();
-        }
-
         if (string.IsNullOrEmpty(maLoaiMonAn))
         {
             AllowedDonViTinhs = DonViTinhs;
             return;
         }
 
-        var allowedDvtIds = await GetAllDonViTinhsAsync();
+        var allowedDvtIds = _allLoaiMonAnDvt
+            .Where(q => q.MaLoaiMonAn == maLoaiMonAn)
+            .Select(q => q.MaDonViTinh)
+            .ToList();
 
         AllowedDonViTinhs = DonViTinhs.Where(d => allowedDvtIds.Contains(d.MaDonViTinh)).ToList();
 
@@ -139,7 +134,7 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
 
     partial void OnSelectedMaLoaiMonAnChanged(string value)
     {
-        _ = UpdateAllowedDonViTinhsAsync(value);
+        UpdateAllowedDonViTinhs(value);
     }
 
     [RelayCommand]
