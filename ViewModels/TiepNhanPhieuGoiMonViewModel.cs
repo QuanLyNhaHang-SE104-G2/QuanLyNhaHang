@@ -277,45 +277,61 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
 
         long total = activeRows.Sum(row => row.GetSoLuongParsed() * row.DonGia);
 
-        try
+        const int maxRetries = 3;
+        for (int attempt = 0; attempt < maxRetries; attempt++)
         {
-            using var context = await _dbContextFactory.CreateDbContextAsync();
-            var newOrder = new PhieuGoiMon
+            try
             {
-                MaPhieuGoiMon = MaPhieuGoiMon,
-                MaBan = SelectedMaBan!.Value,
-                MaNhanVien = SelectedMaNhanVien!.Value,
-                MaTrangThai = SelectedMaTrangThai,
-                ThoiGianGoi = ThoiGianGoi,
-                TongTienTamTinh = total
-            };
-
-            foreach (var row in activeRows)
-            {
-                newOrder.CTGoiMons.Add(new CTGoiMon
+                using var context = await _dbContextFactory.CreateDbContextAsync();
+                var newOrder = new PhieuGoiMon
                 {
                     MaPhieuGoiMon = MaPhieuGoiMon,
-                    MaMonAn = row.SelectedMaMonAn!.Value,
-                    SoLuong = row.GetSoLuongParsed(),
-                    GhiChu = row.GhiChu,
-                    DonGia = row.DonGia
-                });
+                    MaBan = SelectedMaBan!.Value,
+                    MaNhanVien = SelectedMaNhanVien!.Value,
+                    MaTrangThai = SelectedMaTrangThai,
+                    ThoiGianGoi = ThoiGianGoi,
+                    TongTienTamTinh = total
+                };
+
+                foreach (var row in activeRows)
+                {
+                    newOrder.CTGoiMons.Add(new CTGoiMon
+                    {
+                        MaPhieuGoiMon = MaPhieuGoiMon,
+                        MaMonAn = row.SelectedMaMonAn!.Value,
+                        SoLuong = row.GetSoLuongParsed(),
+                        GhiChu = row.GhiChu,
+                        DonGia = row.DonGia
+                    });
+                }
+
+                await context.PhieuGoiMon.AddAsync(newOrder);
+                await context.SaveChangesAsync();
+
+                MessageBox.Show("Tiếp nhận phiếu gọi món thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (window != null)
+                {
+                    window.DialogResult = true;
+                    window.Close();
+                }
+                return;
             }
-
-            await context.PhieuGoiMon.AddAsync(newOrder);
-            await context.SaveChangesAsync();
-
-            MessageBox.Show("Tiếp nhận phiếu gọi món thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-            if (window != null)
+            catch (DbUpdateException ex) when (ex.IsPrimaryKeyViolation() && attempt < maxRetries - 1)
             {
-                window.DialogResult = true;
-                window.Close();
+                // PK collision (TOCTOU): re-generate the order ID and retry.
+                // The CTGoiMon details reference MaPhieuGoiMon, but since we
+                // rebuild newOrder and its details inside the loop, the fresh
+                // MaPhieuGoiMon is used automatically.
+                await GenerateNextMaPhieuGoiMonAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi lưu cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
         }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Lỗi lưu cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+
+        MessageBox.Show("Không thể lưu phiếu gọi món do xung đột mã liên tục. Vui lòng thử lại.", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     [RelayCommand]

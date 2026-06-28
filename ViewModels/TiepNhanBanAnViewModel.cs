@@ -143,12 +143,6 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
     [RelayCommand]
     private async Task AcceptAsync(Window? window)
     {
-        async Task<bool> TableExistsAsync()
-        {
-            using var context = await _dbContextFactory.CreateDbContextAsync();
-            return await context.Ban.AnyAsync(b => b.MaBan == MaBan);
-        }
-
         ValidateAllProperties();
 
         if (HasErrors)
@@ -160,41 +154,49 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
 
         int seats = int.Parse(SoChoNgoi);
 
-        // Check if MaBan already exists
-        if (await TableExistsAsync())
+        const int maxRetries = 3;
+        for (int attempt = 0; attempt < maxRetries; attempt++)
         {
-            MessageBox.Show("Mã bàn ăn đã tồn tại trong hệ thống.", "Lỗi trùng lặp", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        try
-        {
-            var newBan = new Ban
+            try
             {
-                MaBan = MaBan,
-                TenBan = TenBan,
-                KhuVuc = KhuVuc,
-                SoChoNgoi = seats,
-                MaLoaiBan = SelectedMaLoaiBan
-            };
+                var newBan = new Ban
+                {
+                    MaBan = MaBan,
+                    TenBan = TenBan,
+                    KhuVuc = KhuVuc,
+                    SoChoNgoi = seats,
+                    MaLoaiBan = SelectedMaLoaiBan
+                };
 
-            using (var context =  await _dbContextFactory.CreateDbContextAsync())
-            {
-                await context.Ban.AddAsync(newBan);
-                await context.SaveChangesAsync();
+                using (var context = await _dbContextFactory.CreateDbContextAsync())
+                {
+                    await context.Ban.AddAsync(newBan);
+                    await context.SaveChangesAsync();
+                }
+
+                MessageBox.Show("Tiếp nhận bàn ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (window != null)
+                {
+                    window.DialogResult = true;
+                    window.Close();
+                }
+                return;
             }
-
-            MessageBox.Show("Tiếp nhận bàn ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-            if (window != null)
+            catch (DbUpdateException ex) when (ex.IsPrimaryKeyViolation() && attempt < maxRetries - 1)
             {
-                window.DialogResult = true;
-                window.Close();
+                // PK collision (TOCTOU): another insert took our ID.
+                // Re-generate and retry.
+                await GenerateNextMaBanAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi lưu cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
         }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Lỗi lưu cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+
+        // Exhausted retries
+        MessageBox.Show("Không thể lưu bàn ăn do xung đột mã liên tục. Vui lòng thử lại.", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     [RelayCommand]

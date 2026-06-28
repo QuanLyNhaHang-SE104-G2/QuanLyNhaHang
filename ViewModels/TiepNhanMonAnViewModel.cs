@@ -171,34 +171,46 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
 
         long donGia = long.Parse(DonGia);
 
-        var newMonAn = new MonAn
+        const int maxRetries = 3;
+        for (int attempt = 0; attempt < maxRetries; attempt++)
         {
-            MaMonAn = MaMonAn,
-            TenMonAn = TenMonAn,
-            DonGia = donGia,
-            MaLoaiMonAn = SelectedMaLoaiMonAn,
-            MaDonViTinh = SelectedMaDonViTinh,
-            MaTinhTrang = SelectedMaTinhTrang
-        };
+            try
+            {
+                var newMonAn = new MonAn
+                {
+                    MaMonAn = MaMonAn,
+                    TenMonAn = TenMonAn,
+                    DonGia = donGia,
+                    MaLoaiMonAn = SelectedMaLoaiMonAn,
+                    MaDonViTinh = SelectedMaDonViTinh,
+                    MaTinhTrang = SelectedMaTinhTrang
+                };
 
-        try
-        {
-            using (var context = await _dbContextFactory.CreateDbContextAsync())
-            {
-                await context.MonAn.AddAsync(newMonAn);
-                await context.SaveChangesAsync();
+                using (var context = await _dbContextFactory.CreateDbContextAsync())
+                {
+                    await context.MonAn.AddAsync(newMonAn);
+                    await context.SaveChangesAsync();
+                }
+                MessageBox.Show("Thêm món ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (window != null)
+                {
+                    window.DialogResult = true;
+                    window.Close();
+                }
+                return;
             }
-            MessageBox.Show("Thêm món ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-            if (window != null)
+            catch (DbUpdateException ex) when (ex.IsPrimaryKeyViolation() && attempt < maxRetries - 1)
             {
-                window.DialogResult = true;
-                window.Close();
+                await GenerateNextMaMonAnAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi lưu cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
         }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Lỗi lưu cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
+
+        MessageBox.Show("Không thể lưu món ăn do xung đột mã liên tục. Vui lòng thử lại.", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     [RelayCommand]
