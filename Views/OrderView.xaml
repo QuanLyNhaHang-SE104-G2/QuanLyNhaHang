@@ -1,0 +1,48 @@
+<UserControl x:Class="QuanLyNhaHang.Views.OrderView"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+              xmlns:controls="clr-namespace:QuanLyNhaHang.Controls"
+              Background="{StaticResource BackgroundBrush}">
+    <controls:PaginatedView Title="Danh sách gọi món"
+        PageSize="{Binding PageSize, Mode=TwoWay}"
+        PageNumber="{Binding PageNumber, Mode=TwoWay}"
+        TotalInfoText="{Binding TotalInfoText}"
+        PrevPageCommand="{Binding PrevPageCommand}"
+        NextPageCommand="{Binding NextPageCommand}"
+        PageSizes="{Binding PageSizes}"
+        PageNumbers="{Binding PageNumbers}">
+
+        <controls:PaginatedView.ButtonContent>
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource ButtonPrimary}" Command="{Binding AddOrderCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Plus" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Gọi món" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Content="Xóa" Style="{StaticResource ButtonDanger}" Margin="0,0,10,0"/>
+                <Button Content="Sửa" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"/>
+                <Button Content="Tra cứu" Style="{StaticResource ButtonSecondary}" Command="{Binding SearchOrderCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,10,0"/>
+            </StackPanel>
+        </controls:PaginatedView.ButtonContent>
+
+        <controls:PaginatedView.MainContent>
+            <DataGrid ItemsSource="{Binding Orders}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
+                      Validation.ErrorTemplate="{x:Null}"
+                      ScrollViewer.CanContentScroll="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="STT" Width="0.6*" Binding="{Binding STT}"/>
+                    <DataGridTextColumn Header="MÃ ĐƠN" Width="1.2*" Binding="{Binding MaPhieuGoiMon}"/>
+                    <DataGridTextColumn Header="BÀN" Width="1.8*" Binding="{Binding TenBan}"/>
+                    <DataGridTextColumn Header="THỜI GIAN" Width="1.8*" Binding="{Binding ThoiGianGoiText}"/>
+                    <DataGridTextColumn Header="NHÂN VIÊN" Width="1.5*" Binding="{Binding TenNhanVien}"/>
+                    <DataGridTextColumn Header="TRẠNG THÁI" Width="1.5*" Binding="{Binding TenTrangThai}"/>
+                    <DataGridTextColumn Header="TỔNG TIỀN" Width="1.5*" Binding="{Binding TongTienText}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </controls:PaginatedView.MainContent>
+    </controls:PaginatedView>
+</UserControl>
