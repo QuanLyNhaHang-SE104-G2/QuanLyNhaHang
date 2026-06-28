@@ -31,16 +31,16 @@
             <DataGrid ItemsSource="{Binding Orders}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
                       Validation.ErrorTemplate="{x:Null}"
                       ScrollViewer.CanContentScroll="True"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="STT" Width="0.6*" Binding="{Binding STT}"/>
-                    <DataGridTextColumn Header="MÃ ĐƠN" Width="1.2*" Binding="{Binding MaPhieuGoiMon}"/>
-                    <DataGridTextColumn Header="BÀN" Width="1.8*" Binding="{Binding TenBan}"/>
-                    <DataGridTextColumn Header="THỜI GIAN" Width="1.8*" Binding="{Binding ThoiGianGoiText}"/>
-                    <DataGridTextColumn Header="NHÂN VIÊN" Width="1.5*" Binding="{Binding TenNhanVien}"/>
-                    <DataGridTextColumn Header="TRẠNG THÁI" Width="1.5*" Binding="{Binding TenTrangThai}"/>
-                    <DataGridTextColumn Header="TỔNG TIỀN" Width="1.5*" Binding="{Binding TongTienText}"/>
+                    <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}"/>
+                    <DataGridTextColumn Header="MÃ ĐƠN" Width="82" Binding="{Binding MaPhieuGoiMon}"/>
+                    <DataGridTextColumn Header="BÀN" Width="120" Binding="{Binding TenBan}"/>
+                    <DataGridTextColumn Header="THỜI GIAN" Width="*" Binding="{Binding ThoiGianGoiText}"/>
+                    <DataGridTextColumn Header="NHÂN VIÊN" Width="100" Binding="{Binding TenNhanVien}"/>
+                    <DataGridTextColumn Header="TRẠNG THÁI" Width="105" Binding="{Binding TenTrangThai}"/>
+                    <DataGridTextColumn Header="TỔNG TIỀN" Width="*" Binding="{Binding TongTienText}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </controls:PaginatedView.MainContent>

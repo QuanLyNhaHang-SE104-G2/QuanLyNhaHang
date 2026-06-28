@@ -31,15 +31,15 @@
         <controls:PaginatedView.MainContent>
             <DataGrid ItemsSource="{Binding Bans}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
                       ScrollViewer.CanContentScroll="True"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}"/>
-                    <DataGridTextColumn Header="TÊN BÀN" Width="*" Binding="{Binding TenBan}"/>
-                    <DataGridTextColumn Header="KHU VỰC" Width="150" Binding="{Binding KhuVuc}"/>
+                    <DataGridTextColumn Header="TÊN BÀN" Width="140" Binding="{Binding TenBan}"/>
+                    <DataGridTextColumn Header="KHU VỰC" Width="*" Binding="{Binding KhuVuc}"/>
                     <DataGridTextColumn Header="SỐ CHỖ NGỒI" Width="120" Binding="{Binding SoChoNgoiText}"/>
                     <DataGridTextColumn Header="LOẠI BÀN" Width="120" Binding="{Binding TenLoaiBan}"/>
-                    <DataGridTextColumn Header="PHỤ THU" Width="150" Binding="{Binding PhuThuText}"/>
+                    <DataGridTextColumn Header="PHỤ THU" Width="*" Binding="{Binding PhuThuText}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </controls:PaginatedView.MainContent>

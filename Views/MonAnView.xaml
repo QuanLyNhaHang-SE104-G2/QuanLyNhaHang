@@ -31,14 +31,14 @@
             <DataGrid ItemsSource="{Binding MonAns}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
                       SelectedItem="{Binding SelectedMonAn}"
                       ScrollViewer.CanContentScroll="True"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}"/>
                     <DataGridTextColumn Header="TÊN MÓN ĂN" Width="*" Binding="{Binding TenMonAn}"/>
-                    <DataGridTextColumn Header="LOẠI MÓN ĂN" Width="150" Binding="{Binding TenLoaiMonAn}"/>
-                    <DataGridTextColumn Header="ĐƠN VỊ TÍNH" Width="120" Binding="{Binding TenDonViTinh}"/>
-                    <DataGridTextColumn Header="ĐƠN GIÁ" Width="150" Binding="{Binding DonGiaText}"/>
+                    <DataGridTextColumn Header="LOẠI MÓN ĂN" Width="120" Binding="{Binding TenLoaiMonAn}"/>
+                    <DataGridTextColumn Header="ĐƠN VỊ TÍNH" Width="110" Binding="{Binding TenDonViTinh}"/>
+                    <DataGridTextColumn Header="ĐƠN GIÁ" Width="120" Binding="{Binding DonGiaText}"/>
                     <DataGridTextColumn Header="TÌNH TRẠNG" Width="120" Binding="{Binding TenTinhTrang}"/>
                 </DataGrid.Columns>
             </DataGrid>

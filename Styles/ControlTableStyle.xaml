@@ -18,7 +18,7 @@
                         </Grid.RowDefinitions>
 
                         <!-- Content Area: The editable DataGrid -->
-                        <ContentPresenter Grid.Row="0" Content="{TemplateBinding Content}"/>
+                        <ContentPresenter Grid.Row="0" Content="{TemplateBinding Content}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 
                         <!-- Row 1: Add Row Button (Bottom-Right, above pagination) -->
                         <Button Grid.Row="1" Style="{StaticResource ButtonPrimary}"
@@ -32,7 +32,7 @@
                         </Button>
 
                         <!-- Row 2: Pagination Footer (below Add Row Button) -->
-                        <Grid Grid.Row="2" Margin="0,15,0,0">
+                        <Grid Grid.Row="2" Margin="0,15,0,0" VerticalAlignment="Bottom">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
@@ -40,7 +40,7 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Pagination Controls (Left/Center) using General Styles -->
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Bottom">
                                 <TextBlock Text="Số dòng:" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,5,0"/>
                                 <ComboBox Width="80" Style="{StaticResource InputComboBox}"
                                           ItemsSource="{TemplateBinding PageSizes}"

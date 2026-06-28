@@ -9,7 +9,6 @@
         mc:Ignorable="d"
         Title="" Height="650" Width="850"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
         ShowInTaskbar="False"
         Background="White">
     <Grid Margin="20">
@@ -76,6 +75,7 @@
 
         <!-- Detail Grid Table (ControlTable) -->
         <controls:ControlTable Grid.Row="2" Margin="0,0,0,15"
+                               VerticalAlignment="Stretch"
                                DishesSource="{Binding ActiveMonAns}"
                                ItemsSource="{Binding PagedItems}"
                                SelectedItem="{Binding SelectedOrderDetail}"
@@ -87,13 +87,15 @@
                                NextPageCommand="{Binding NextPageCommand}"
                                PageSizes="{Binding PageSizes}"
                                PageNumbers="{Binding PageNumbers}">
-            <DataGrid ItemsSource="{Binding PagedItems}" SelectedItem="{Binding SelectedOrderDetail}" Style="{StaticResource GeneralDataGrid}" Height="230"
+            <DataGrid ItemsSource="{Binding PagedItems}" SelectedItem="{Binding SelectedOrderDetail}"
+                      Style="{StaticResource GeneralDataGrid}"
+                      VerticalScrollBarVisibility="Visible"
                       Validation.ErrorTemplate="{x:Null}"
                       ScrollViewer.CanContentScroll="True"
                       ScrollViewer.VerticalScrollBarVisibility="Auto"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="STT" Width="0.6*" Binding="{Binding STT}" IsReadOnly="True">
+                    <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="VerticalAlignment" Value="Center"/>
@@ -102,7 +104,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     
-                    <DataGridTemplateColumn Header="TÊN MÓN ĂN" Width="2.8*">
+                    <DataGridTemplateColumn Header="TÊN MÓN ĂN" Width="2*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <ComboBox Style="{StaticResource InputComboBox}"
@@ -115,7 +117,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="SỐ LƯỢNG" Width="1.2*">
+                    <DataGridTemplateColumn Header="SỐ LƯỢNG" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox Style="{StaticResource InputTextBox}"
@@ -125,7 +127,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="ĐƠN VỊ TÍNH" Width="1.2*" Binding="{Binding TenDonViTinh}" IsReadOnly="True">
+                    <DataGridTextColumn Header="ĐƠN VỊ TÍNH" Width="110" Binding="{Binding TenDonViTinh}" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="VerticalAlignment" Value="Center"/>
@@ -135,7 +137,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="ĐƠN GIÁ" Width="1.5*" Binding="{Binding DonGiaText}" IsReadOnly="True">
+                    <DataGridTextColumn Header="ĐƠN GIÁ" Width="*" Binding="{Binding DonGiaText}" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="VerticalAlignment" Value="Center"/>
@@ -145,7 +147,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     
-                    <DataGridTemplateColumn Header="GHI CHÚ" Width="2.5*">
+                    <DataGridTemplateColumn Header="GHI CHÚ" Width="2*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBox Style="{StaticResource InputTextBox}"
@@ -155,7 +157,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="THAO TÁC" Width="1*">
+                    <DataGridTemplateColumn Header="THAO TÁC" Width="90">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource ButtonDanger}" Padding="6,4" 

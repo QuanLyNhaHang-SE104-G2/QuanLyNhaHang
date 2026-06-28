@@ -9,7 +9,6 @@
         mc:Ignorable="d"
         Title="Tra cứu" Height="650" Width="850"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
         ShowInTaskbar="False"
         Background="White">
     
