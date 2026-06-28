@@ -66,7 +66,7 @@ public partial class OrderViewModel : PaginatedViewModelBase
                 STT = stt++,
                 MaPhieuGoiMon = order.MaPhieuGoiMon,
                 TenBan = order.Ban?.TenBan ?? "",
-                ThoiGianGoiText = $"{order.ThoiGianGoi.ToString("hh:mm tt", System.Globalization.CultureInfo.InvariantCulture)} Hôm nay",
+                ThoiGianGoiText = order.ThoiGianGoi.ToString("yyyy-MM-dd HH:mm"),
                 TenNhanVien = order.NhanVien?.TenNhanVien ?? "",
                 TenTrangThai = order.TrangThai?.TenTrangThai ?? "",
                 MaTrangThai = order.MaTrangThai,

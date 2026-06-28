@@ -42,7 +42,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
     private List<LoaiBan> _loaiBans = [];
 
     [ObservableProperty]
-    private string _phuThuText = "0 VNĐ";
+    private string _phuThuText = "0 VND";
 
     private decimal _phuThuVal = 0;
 

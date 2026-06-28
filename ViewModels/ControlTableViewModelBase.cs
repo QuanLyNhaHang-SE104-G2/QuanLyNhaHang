@@ -48,9 +48,8 @@ public abstract partial class ControlTableViewModelBase : ObservableValidator
     }
 
     // Refactored to accept an external count dynamically
-    protected void UpdatePaginationInfo(int totalItemCount)
+    protected void UpdatePaginationInfo()
     {
-        TotalItems = totalItemCount;
         int totalPages = (int)Math.Ceiling((double)TotalItems / PageSize);
         if (totalPages < 1) totalPages = 1;
 
