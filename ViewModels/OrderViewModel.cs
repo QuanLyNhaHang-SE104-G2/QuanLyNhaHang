@@ -54,11 +54,13 @@ public partial class OrderViewModel : PaginatedViewModelBase
 
         var rawOrders = await GetOrdersAsync();
 
-        Orders.Clear();
+        cancellationToken.ThrowIfCancellationRequested();
+
         int stt = (PageNumber - 1) * PageSize + 1;
+        var page = new List<OrderItemViewModel>(rawOrders.Count);
         foreach (var order in rawOrders)
         {
-            Orders.Add(new OrderItemViewModel
+            page.Add(new OrderItemViewModel
             {
                 STT = stt++,
                 MaPhieuGoiMon = order.MaPhieuGoiMon,
@@ -70,6 +72,8 @@ public partial class OrderViewModel : PaginatedViewModelBase
                 TongTienText = $"{order.TongTienTamTinh:N0} VND"
             });
         }
+
+        Orders = new ObservableCollection<OrderItemViewModel>(page);
     }
 
     [RelayCommand]

@@ -52,11 +52,13 @@ public partial class MonAnViewModel : PaginatedViewModelBase
 
         var rawMonAns = await GetMonAnsAsync();
 
-        MonAns.Clear();
+        cancellationToken.ThrowIfCancellationRequested();
+
         int stt = (PageNumber - 1) * PageSize + 1;
+        var page = new List<MonAnItemViewModel>(rawMonAns.Count);
         foreach (var monAn in rawMonAns)
         {
-            MonAns.Add(new MonAnItemViewModel
+            page.Add(new MonAnItemViewModel
             {
                 STT = stt++,
                 MaMonAn = monAn.MaMonAn,
@@ -67,6 +69,8 @@ public partial class MonAnViewModel : PaginatedViewModelBase
                 TenTinhTrang = monAn.TinhTrang?.TenTinhTrang ?? ""
             });
         }
+
+        MonAns = new ObservableCollection<MonAnItemViewModel>(page);
     }
 
     [RelayCommand]

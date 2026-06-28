@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
@@ -48,11 +49,13 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
 
         var rawBans = await GetBansAsync();
 
-        Bans.Clear();
+        cancellationToken.ThrowIfCancellationRequested();
+
         int stt = (PageNumber - 1) * PageSize + 1;
+        var page = new List<BanItemViewModel>(rawBans.Count);
         foreach (var ban in rawBans)
         {
-            Bans.Add(new BanItemViewModel
+            page.Add(new BanItemViewModel
             {
                 STT = stt++,
                 MaBan = ban.MaBan,
@@ -64,6 +67,8 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
                 PhuThuText = $"{(ban.LoaiBan?.PhuThu ?? 0):N0} VND"
             });
         }
+
+        Bans = new ObservableCollection<BanItemViewModel>(page);
     }
 
     [RelayCommand]
