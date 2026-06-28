@@ -9,6 +9,8 @@ namespace QuanLyNhaHang.ViewModels;
 
 public partial class CTGoiMonItemViewModel : ObservableValidator
 {
+    // Shared reference to the parent's ActiveMonAns list — not a copy.
+    // This is intentional to avoid per-row allocations.
     private readonly List<MonAn> _dishes;
 
     [ObservableProperty]
