@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuanLyNhaHang.Models;
@@ -7,8 +7,9 @@ namespace QuanLyNhaHang.Models;
 public class Ban
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Column("MaBan")]
-    public string MaBan { get; set; } = null!;
+    public int MaBan { get; set; }
 
     [Column("TenBan")]
     public string TenBan { get; set; } = null!;

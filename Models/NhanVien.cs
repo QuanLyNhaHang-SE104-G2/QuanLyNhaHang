@@ -7,8 +7,9 @@ namespace QuanLyNhaHang.Models;
 public class NhanVien
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Column("MaNhanVien")]
-    public string MaNhanVien { get; set; } = null!;
+    public int MaNhanVien { get; set; }
 
     [Column("TenNhanVien")]
     public string TenNhanVien { get; set; } = null!;

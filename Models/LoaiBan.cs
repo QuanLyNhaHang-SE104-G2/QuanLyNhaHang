@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuanLyNhaHang.Models;
@@ -14,7 +15,7 @@ public class LoaiBan
     public string TenLoaiBan { get; set; } = null!;
 
     [Column("PhuThu")]
-    public decimal PhuThu { get; set; }
+    public long PhuThu { get; set; }
 
     public virtual ICollection<Ban> Bans { get; set; } = [];
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -18,7 +18,7 @@ namespace QuanLyNhaHang.Migrations
                 {
                     MaLoaiBan = table.Column<string>(type: "TEXT", nullable: false),
                     TenLoaiBan = table.Column<string>(type: "TEXT", nullable: false),
-                    PhuThu = table.Column<decimal>(type: "TEXT", nullable: false)
+                    PhuThu = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,7 +42,7 @@ namespace QuanLyNhaHang.Migrations
                 name: "BAN",
                 columns: table => new
                 {
-                    MaBan = table.Column<string>(type: "TEXT", nullable: false),
+                    MaBan = table.Column<int>(type: "INTEGER", nullable: false),
                     TenBan = table.Column<string>(type: "TEXT", nullable: false),
                     KhuVuc = table.Column<string>(type: "TEXT", nullable: false),
                     SoChoNgoi = table.Column<int>(type: "INTEGER", nullable: false),
@@ -64,9 +64,9 @@ namespace QuanLyNhaHang.Migrations
                 columns: new[] { "MaLoaiBan", "PhuThu", "TenLoaiBan" },
                 values: new object[,]
                 {
-                    { "Thuong", 0m, "Thường" },
-                    { "VIP", 50000m, "VIP" },
-                    { "VVIP", 80000m, "VVIP" }
+                    { "Thuong", 0L, "Thường" },
+                    { "VIP", 50000L, "VIP" },
+                    { "VVIP", 80000L, "VVIP" }
                 });
 
             migrationBuilder.InsertData(

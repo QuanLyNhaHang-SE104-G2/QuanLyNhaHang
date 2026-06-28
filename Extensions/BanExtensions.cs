@@ -19,12 +19,12 @@ public static class BanExtensions
         string? maLoaiBan,
         int? minSeats,
         int? maxSeats,
-        decimal? minPhuThu,
-        decimal? maxPhuThu)
+        long? minPhuThu,
+        long? maxPhuThu)
     {
-        if (!string.IsNullOrWhiteSpace(maBan))
+        if (!string.IsNullOrWhiteSpace(maBan) && int.TryParse(maBan, out int idVal))
         {
-            query = query.Where(b => b.MaBan.Contains(maBan));
+            query = query.Where(b => b.MaBan == idVal);
         }
 
         if (!string.IsNullOrWhiteSpace(tenBan))

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -17,7 +17,7 @@ namespace QuanLyNhaHang.Migrations
                 name: "NHANVIEN",
                 columns: table => new
                 {
-                    MaNhanVien = table.Column<string>(type: "TEXT", nullable: false),
+                    MaNhanVien = table.Column<int>(type: "INTEGER", nullable: false),
                     TenNhanVien = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -41,12 +41,12 @@ namespace QuanLyNhaHang.Migrations
                 name: "PHIEUGOIMON",
                 columns: table => new
                 {
-                    MaPhieuGoiMon = table.Column<string>(type: "TEXT", nullable: false),
+                    MaPhieuGoiMon = table.Column<int>(type: "INTEGER", nullable: false),
                     ThoiGianGoi = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    TongTienTamTinh = table.Column<decimal>(type: "TEXT", nullable: false),
+                    TongTienTamTinh = table.Column<long>(type: "INTEGER", nullable: false),
                     MaTrangThai = table.Column<string>(type: "TEXT", nullable: false),
-                    MaNhanVien = table.Column<string>(type: "TEXT", nullable: false),
-                    MaBan = table.Column<string>(type: "TEXT", nullable: false)
+                    MaNhanVien = table.Column<int>(type: "INTEGER", nullable: false),
+                    MaBan = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -75,11 +75,11 @@ namespace QuanLyNhaHang.Migrations
                 name: "CTGOIMON",
                 columns: table => new
                 {
-                    MaPhieuGoiMon = table.Column<string>(type: "TEXT", nullable: false),
-                    MaMonAn = table.Column<string>(type: "TEXT", nullable: false),
+                    MaPhieuGoiMon = table.Column<int>(type: "INTEGER", nullable: false),
+                    MaMonAn = table.Column<int>(type: "INTEGER", nullable: false),
                     SoLuong = table.Column<int>(type: "INTEGER", nullable: false),
                     GhiChu = table.Column<string>(type: "TEXT", nullable: true),
-                    DonGia = table.Column<decimal>(type: "TEXT", nullable: false)
+                    DonGia = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -96,16 +96,6 @@ namespace QuanLyNhaHang.Migrations
                         principalTable: "PHIEUGOIMON",
                         principalColumn: "MaPhieuGoiMon",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "NHANVIEN",
-                columns: new[] { "MaNhanVien", "TenNhanVien" },
-                values: new object[,]
-                {
-                    { "NV001", "Mai P." },
-                    { "NV002", "Hoàng T." },
-                    { "NV003", "Linh N." }
                 });
 
             migrationBuilder.InsertData(

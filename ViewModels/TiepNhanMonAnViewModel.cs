@@ -95,13 +95,11 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
 
-            // Perform maximum evaluation natively on the string data type at the database level
-            string? maxMa = await context.MonAn
-                .Select(m => m.MaMonAn)
+            int? maxId = await context.MonAn
+                .Select(m => (int?)m.MaMonAn)
                 .MaxAsync();
 
-            // Parse the resulting string value locally on the client layer
-            return maxMa != null && int.TryParse(maxMa, out int id) ? id : 0;
+            return maxId ?? 0;
         }
 
         int maxId = await GetMaxIdAsync();
@@ -149,9 +147,9 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
 
     public static ValidationResult? ValidateDonGia(string value, ValidationContext context)
     {
-        if (string.IsNullOrWhiteSpace(value) || !decimal.TryParse(value, out decimal donGia) || donGia < 0)
+        if (string.IsNullOrWhiteSpace(value) || !long.TryParse(value, out long donGia) || donGia < 0)
         {
-            return new ValidationResult("Đơn giá phải là số hợp lệ và lớn hơn hoặc bằng 0.");
+            return new ValidationResult("Đơn giá phải là số nguyên hợp lệ và lớn hơn hoặc bằng 0.");
         }
         return ValidationResult.Success;
     }
@@ -168,11 +166,11 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
             return;
         }
 
-        decimal donGia = decimal.Parse(DonGia);
+        long donGia = long.Parse(DonGia);
 
         var newMonAn = new MonAn
         {
-            MaMonAn = MaMonAn,
+            MaMonAn = int.Parse(MaMonAn),
             TenMonAn = TenMonAn,
             DonGia = donGia,
             MaLoaiMonAn = SelectedMaLoaiMonAn,

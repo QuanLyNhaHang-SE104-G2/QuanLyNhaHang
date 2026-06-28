@@ -86,11 +86,7 @@ public class AppDbContext: DbContext
             new TrangThai { MaTrangThai = "Huy", TenTrangThai = "Huỷ" }
         );
 
-        modelBuilder.Entity<NhanVien>().HasData(
-            new NhanVien { MaNhanVien = "NV001", TenNhanVien = "Mai P." },
-            new NhanVien { MaNhanVien = "NV002", TenNhanVien = "Hoàng T." },
-            new NhanVien { MaNhanVien = "NV003", TenNhanVien = "Linh N." }
-        );
+
     }
 
     public static string? LoadConnectionStringFromConfig()

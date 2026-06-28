@@ -7,14 +7,15 @@ namespace QuanLyNhaHang.Models;
 public class MonAn
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Column("MaMonAn")]
-    public string MaMonAn { get; set; } = null!;
+    public int MaMonAn { get; set; }
 
     [Column("TenMonAn")]
     public string TenMonAn { get; set; } = null!;
 
     [Column("DonGia")]
-    public decimal DonGia { get; set; }
+    public long DonGia { get; set; }
 
     [Column("MaLoaiMonAn")]
     public string MaLoaiMonAn { get; set; } = null!;

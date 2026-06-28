@@ -83,11 +83,11 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
 
-            string? maxId = await context.Ban
-                .Select(m => m.MaBan)
+            int? maxId = await context.Ban
+                .Select(m => (int?)m.MaBan)
                 .MaxAsync();
 
-            return maxId != null && int.TryParse(maxId, out int id) ? id : 0;
+            return maxId ?? 0;
         }
         int maxId = await GetMaxIdAsync();
         MaBan = $"{(maxId + 1):D2}";
@@ -143,7 +143,11 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
         async Task<bool> TableExistsAsync()
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            return await context.Ban.AnyAsync(b => b.MaBan == MaBan);
+            if (int.TryParse(MaBan, out int idVal))
+            {
+                return await context.Ban.AnyAsync(b => b.MaBan == idVal);
+            }
+            return false;
         }
 
         ValidateAllProperties();
@@ -168,7 +172,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
         {
             var newBan = new Ban
             {
-                MaBan = MaBan,
+                MaBan = int.Parse(MaBan),
                 TenBan = TenBan,
                 KhuVuc = KhuVuc,
                 SoChoNgoi = seats,

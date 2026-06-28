@@ -7,13 +7,13 @@ namespace QuanLyNhaHang.Models;
 public class CTGoiMon
 {
     [Column("MaPhieuGoiMon")]
-    public string MaPhieuGoiMon { get; set; } = null!;
+    public int MaPhieuGoiMon { get; set; }
 
     [ForeignKey(nameof(MaPhieuGoiMon))]
     public virtual PhieuGoiMon PhieuGoiMon { get; set; } = null!;
 
     [Column("MaMonAn")]
-    public string MaMonAn { get; set; } = null!;
+    public int MaMonAn { get; set; }
 
     [ForeignKey(nameof(MaMonAn))]
     public virtual MonAn MonAn { get; set; } = null!;
@@ -25,5 +25,5 @@ public class CTGoiMon
     public string? GhiChu { get; set; }
 
     [Column("DonGia")]
-    public decimal DonGia { get; set; }
+    public long DonGia { get; set; }
 }

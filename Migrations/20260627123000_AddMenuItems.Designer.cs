@@ -25,8 +25,8 @@ namespace QuanLyNhaHang.Migrations
 
             modelBuilder.Entity("QuanLyNhaHang.Models.Ban", b =>
                 {
-                    b.Property<string>("MaBan")
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaBan")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaBan");
 
                     b.Property<string>("KhuVuc")
@@ -99,8 +99,8 @@ namespace QuanLyNhaHang.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("MaLoaiBan");
 
-                    b.Property<decimal>("PhuThu")
-                        .HasColumnType("TEXT")
+                    b.Property<long>("PhuThu")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("PhuThu");
 
                     b.Property<string>("TenLoaiBan")
@@ -116,19 +116,19 @@ namespace QuanLyNhaHang.Migrations
                         new
                         {
                             MaLoaiBan = "Thuong",
-                            PhuThu = 0m,
+                            PhuThu = 0L,
                             TenLoaiBan = "Thường"
                         },
                         new
                         {
                             MaLoaiBan = "VIP",
-                            PhuThu = 50000m,
+                            PhuThu = 50000L,
                             TenLoaiBan = "VIP"
                         },
                         new
                         {
                             MaLoaiBan = "VVIP",
-                            PhuThu = 80000m,
+                            PhuThu = 80000L,
                             TenLoaiBan = "VVIP"
                         });
                 });
@@ -232,12 +232,12 @@ namespace QuanLyNhaHang.Migrations
 
             modelBuilder.Entity("QuanLyNhaHang.Models.MonAn", b =>
                 {
-                    b.Property<string>("MaMonAn")
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaMonAn")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaMonAn");
 
-                    b.Property<decimal>("DonGia")
-                        .HasColumnType("TEXT")
+                    b.Property<long>("DonGia")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("DonGia");
 
                     b.Property<string>("MaDonViTinh")

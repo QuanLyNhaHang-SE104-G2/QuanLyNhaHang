@@ -9,14 +9,15 @@ namespace QuanLyNhaHang.Models;
 public class PhieuGoiMon
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Column("MaPhieuGoiMon")]
-    public string MaPhieuGoiMon { get; set; } = null!;
+    public int MaPhieuGoiMon { get; set; }
 
     [Column("ThoiGianGoi")]
     public DateTime ThoiGianGoi { get; set; }
 
     [Column("TongTienTamTinh")]
-    public decimal TongTienTamTinh { get; set; }
+    public long TongTienTamTinh { get; set; }
 
     [Column("MaTrangThai")]
     public string MaTrangThai { get; set; } = null!;
@@ -25,13 +26,13 @@ public class PhieuGoiMon
     public virtual TrangThai TrangThai { get; set; } = null!;
 
     [Column("MaNhanVien")]
-    public string MaNhanVien { get; set; } = null!;
+    public int MaNhanVien { get; set; }
 
     [ForeignKey(nameof(MaNhanVien))]
     public virtual NhanVien NhanVien { get; set; } = null!;
 
     [Column("MaBan")]
-    public string MaBan { get; set; } = null!;
+    public int MaBan { get; set; }
 
     [ForeignKey(nameof(MaBan))]
     public virtual Ban Ban { get; set; } = null!;

@@ -19,8 +19,8 @@ namespace QuanLyNhaHang.Migrations
 
             modelBuilder.Entity("QuanLyNhaHang.Models.Ban", b =>
                 {
-                    b.Property<string>("MaBan")
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaBan")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaBan");
 
                     b.Property<string>("KhuVuc")
@@ -46,21 +46,21 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasIndex("MaLoaiBan");
 
-                    b.ToTable("BAN");
+                    b.ToTable("BAN", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyNhaHang.Models.CTGoiMon", b =>
                 {
-                    b.Property<string>("MaPhieuGoiMon")
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaPhieuGoiMon")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaPhieuGoiMon");
 
-                    b.Property<string>("MaMonAn")
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaMonAn")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaMonAn");
 
-                    b.Property<decimal>("DonGia")
-                        .HasColumnType("TEXT")
+                    b.Property<long>("DonGia")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("DonGia");
 
                     b.Property<string>("GhiChu")
@@ -75,7 +75,7 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasIndex("MaMonAn");
 
-                    b.ToTable("CTGOIMON");
+                    b.ToTable("CTGOIMON", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyNhaHang.Models.DonViTinh", b =>
@@ -91,7 +91,7 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasKey("MaDonViTinh");
 
-                    b.ToTable("DONVITINH");
+                    b.ToTable("DONVITINH", (string)null);
 
                     b.HasData(
                         new
@@ -122,8 +122,8 @@ namespace QuanLyNhaHang.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("MaLoaiBan");
 
-                    b.Property<decimal>("PhuThu")
-                        .HasColumnType("TEXT")
+                    b.Property<long>("PhuThu")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("PhuThu");
 
                     b.Property<string>("TenLoaiBan")
@@ -133,25 +133,25 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasKey("MaLoaiBan");
 
-                    b.ToTable("LOAIBAN");
+                    b.ToTable("LOAIBAN", (string)null);
 
                     b.HasData(
                         new
                         {
                             MaLoaiBan = "Thuong",
-                            PhuThu = 0m,
+                            PhuThu = 0L,
                             TenLoaiBan = "Thường"
                         },
                         new
                         {
                             MaLoaiBan = "VIP",
-                            PhuThu = 50000m,
+                            PhuThu = 50000L,
                             TenLoaiBan = "VIP"
                         },
                         new
                         {
                             MaLoaiBan = "VVIP",
-                            PhuThu = 80000m,
+                            PhuThu = 80000L,
                             TenLoaiBan = "VVIP"
                         });
                 });
@@ -169,7 +169,7 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasKey("MaLoaiMonAn");
 
-                    b.ToTable("LOAIMONAN");
+                    b.ToTable("LOAIMONAN", (string)null);
 
                     b.HasData(
                         new
@@ -208,7 +208,7 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasIndex("MaDonViTinh");
 
-                    b.ToTable("QD_LOAIMON_DVT");
+                    b.ToTable("QD_LOAIMON_DVT", (string)null);
 
                     b.HasData(
                         new
@@ -255,12 +255,12 @@ namespace QuanLyNhaHang.Migrations
 
             modelBuilder.Entity("QuanLyNhaHang.Models.MonAn", b =>
                 {
-                    b.Property<string>("MaMonAn")
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaMonAn")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaMonAn");
 
-                    b.Property<decimal>("DonGia")
-                        .HasColumnType("TEXT")
+                    b.Property<long>("DonGia")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("DonGia");
 
                     b.Property<string>("MaDonViTinh")
@@ -291,13 +291,13 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasIndex("MaTinhTrang");
 
-                    b.ToTable("MONAN");
+                    b.ToTable("MONAN", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyNhaHang.Models.NhanVien", b =>
                 {
-                    b.Property<string>("MaNhanVien")
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaNhanVien")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaNhanVien");
 
                     b.Property<string>("TenNhanVien")
@@ -307,40 +307,21 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasKey("MaNhanVien");
 
-                    b.ToTable("NHANVIEN");
-
-                    b.HasData(
-                        new
-                        {
-                            MaNhanVien = "NV001",
-                            TenNhanVien = "Mai P."
-                        },
-                        new
-                        {
-                            MaNhanVien = "NV002",
-                            TenNhanVien = "Hoàng T."
-                        },
-                        new
-                        {
-                            MaNhanVien = "NV003",
-                            TenNhanVien = "Linh N."
-                        });
+                    b.ToTable("NHANVIEN", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyNhaHang.Models.PhieuGoiMon", b =>
                 {
-                    b.Property<string>("MaPhieuGoiMon")
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaPhieuGoiMon")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaPhieuGoiMon");
 
-                    b.Property<string>("MaBan")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaBan")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaBan");
 
-                    b.Property<string>("MaNhanVien")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
+                    b.Property<int>("MaNhanVien")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("MaNhanVien");
 
                     b.Property<string>("MaTrangThai")
@@ -352,8 +333,8 @@ namespace QuanLyNhaHang.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("ThoiGianGoi");
 
-                    b.Property<decimal>("TongTienTamTinh")
-                        .HasColumnType("TEXT")
+                    b.Property<long>("TongTienTamTinh")
+                        .HasColumnType("INTEGER")
                         .HasColumnName("TongTienTamTinh");
 
                     b.HasKey("MaPhieuGoiMon");
@@ -364,7 +345,7 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasIndex("MaTrangThai");
 
-                    b.ToTable("PHIEUGOIMON");
+                    b.ToTable("PHIEUGOIMON", (string)null);
                 });
 
             modelBuilder.Entity("QuanLyNhaHang.Models.ThamSo", b =>
@@ -380,7 +361,7 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("THAMSO");
+                    b.ToTable("THAMSO", (string)null);
 
                     b.HasData(
                         new
@@ -403,7 +384,7 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasKey("MaTinhTrang");
 
-                    b.ToTable("TINHTRANG");
+                    b.ToTable("TINHTRANG", (string)null);
 
                     b.HasData(
                         new
@@ -431,7 +412,7 @@ namespace QuanLyNhaHang.Migrations
 
                     b.HasKey("MaTrangThai");
 
-                    b.ToTable("TRANGTHAI");
+                    b.ToTable("TRANGTHAI", (string)null);
 
                     b.HasData(
                         new

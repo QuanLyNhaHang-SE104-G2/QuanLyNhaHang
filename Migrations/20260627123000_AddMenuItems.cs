@@ -76,9 +76,9 @@ namespace QuanLyNhaHang.Migrations
                 name: "MONAN",
                 columns: table => new
                 {
-                    MaMonAn = table.Column<string>(type: "TEXT", nullable: false),
+                    MaMonAn = table.Column<int>(type: "INTEGER", nullable: false),
                     TenMonAn = table.Column<string>(type: "TEXT", nullable: false),
-                    DonGia = table.Column<decimal>(type: "TEXT", nullable: false),
+                    DonGia = table.Column<long>(type: "INTEGER", nullable: false),
                     MaLoaiMonAn = table.Column<string>(type: "TEXT", nullable: false),
                     MaDonViTinh = table.Column<string>(type: "TEXT", nullable: false),
                     MaTinhTrang = table.Column<string>(type: "TEXT", nullable: false)

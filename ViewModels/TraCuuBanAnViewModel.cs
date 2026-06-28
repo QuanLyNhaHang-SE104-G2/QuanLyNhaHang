@@ -108,8 +108,8 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
 
         int? minSeats = int.TryParse(SoChoNgoiTu, out int minS) ? minS : null;
         int? maxSeats = int.TryParse(SoChoNgoiDen, out int maxS) ? maxS : null;
-        decimal? minPhuThu = decimal.TryParse(PhuThuTu, out decimal minP) ? minP : null;
-        decimal? maxPhuThu = decimal.TryParse(PhuThuDen, out decimal maxP) ? maxP : null;
+        long? minPhuThu = long.TryParse(PhuThuTu, out long minP) ? minP : null;
+        long? maxPhuThu = long.TryParse(PhuThuDen, out long maxP) ? maxP : null;
 
         List<Ban> rawBans;
 
@@ -137,7 +137,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
             tempList.Add(new BanItemViewModel
             {
                 STT = stt++,
-                MaBan = ban.MaBan,
+                MaBan = ban.MaBan.ToString("D2"),
                 TenBan = ban.TenBan,
                 KhuVuc = ban.KhuVuc,
                 SoChoNgoi = ban.SoChoNgoi,
