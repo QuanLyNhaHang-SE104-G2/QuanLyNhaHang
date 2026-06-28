@@ -8,13 +8,15 @@ namespace QuanLyNhaHang.Services;
 
 public class DialogService : IDialogService
 {
-    public bool? ShowTiepNhanBanAnDialog(Window? owner)
+    private static bool? ShowDialog<TWindow, TViewModel>(Window? owner)
+        where TWindow : Window, new()
+        where TViewModel : class
     {
-        var dialog = new TiepNhanBanAnWindow
+        var dialog = new TWindow
         {
             Owner = owner ?? Application.Current.MainWindow
         };
-        var viewModel = App.Current.Services.GetRequiredService<TiepNhanBanAnViewModel>();
+        var viewModel = App.Current.Services.GetRequiredService<TViewModel>();
         dialog.DataContext = viewModel;
         try
         {
@@ -28,88 +30,42 @@ public class DialogService : IDialogService
             }
         }
     }
+
+    private static void ShowDialogNoResult<TWindow, TViewModel>(Window? owner)
+        where TWindow : Window, new()
+        where TViewModel : class
+    {
+        var dialog = new TWindow
+        {
+            Owner = owner ?? Application.Current.MainWindow
+        };
+        var viewModel = App.Current.Services.GetRequiredService<TViewModel>();
+        dialog.DataContext = viewModel;
+        try
+        {
+            dialog.ShowDialog();
+        }
+        finally
+        {
+            if (viewModel is IDisposable disposableVM)
+            {
+                disposableVM.Dispose();
+            }
+        }
+    }
+
+    public bool? ShowTiepNhanBanAnDialog(Window? owner)
+        => ShowDialog<TiepNhanBanAnWindow, TiepNhanBanAnViewModel>(owner);
 
     public bool? ShowTiepNhanMonAnDialog(Window? owner)
-    {
-        var dialog = new TiepNhanMonAnWindow
-        {
-            Owner = owner ?? Application.Current.MainWindow
-        };
-        var viewModel = App.Current.Services.GetRequiredService<TiepNhanMonAnViewModel>();
-        dialog.DataContext = viewModel;
-        try
-        {
-            return dialog.ShowDialog();
-        }
-        finally
-        {
-            if (viewModel is IDisposable disposableVM)
-            {
-                disposableVM.Dispose();
-            }
-        }
-    }
+        => ShowDialog<TiepNhanMonAnWindow, TiepNhanMonAnViewModel>(owner);
 
     public void ShowTraCuuBanAnDialog(Window? owner)
-    {
-        var dialog = new TraCuuBanAnWindow
-        {
-            Owner = owner ?? Application.Current.MainWindow
-        };
-        var viewModel = App.Current.Services.GetRequiredService<TraCuuBanAnViewModel>();
-        dialog.DataContext = viewModel;
-        try
-        {
-            dialog.ShowDialog();
-        }
-        finally
-        {
-            if (viewModel is IDisposable disposableVM)
-            {
-                disposableVM.Dispose();
-            }
-        }
-    }
+        => ShowDialogNoResult<TraCuuBanAnWindow, TraCuuBanAnViewModel>(owner);
 
     public bool? ShowTiepNhanPhieuGoiMonDialog(Window? owner)
-    {
-        var dialog = new TiepNhanPhieuGoiMonWindow
-        {
-            Owner = owner ?? Application.Current.MainWindow
-        };
-        var viewModel = App.Current.Services.GetRequiredService<TiepNhanPhieuGoiMonViewModel>();
-        dialog.DataContext = viewModel;
-        try
-        {
-            return dialog.ShowDialog();
-        }
-        finally
-        {
-            if (viewModel is IDisposable disposableVM)
-            {
-                disposableVM.Dispose();
-            }
-        }
-    }
+        => ShowDialog<TiepNhanPhieuGoiMonWindow, TiepNhanPhieuGoiMonViewModel>(owner);
 
     public void ShowTraCuuPhieuGoiMonDialog(Window? owner)
-    {
-        var dialog = new TraCuuPhieuGoiMonWindow
-        {
-            Owner = owner ?? Application.Current.MainWindow
-        };
-        var viewModel = App.Current.Services.GetRequiredService<TraCuuPhieuGoiMonViewModel>();
-        dialog.DataContext = viewModel;
-        try
-        {
-            dialog.ShowDialog();
-        }
-        finally
-        {
-            if (viewModel is IDisposable disposableVM)
-            {
-                disposableVM.Dispose();
-            }
-        }
-    }
+        => ShowDialogNoResult<TraCuuPhieuGoiMonWindow, TraCuuPhieuGoiMonViewModel>(owner);
 }
