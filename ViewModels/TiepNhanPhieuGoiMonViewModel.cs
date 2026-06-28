@@ -127,13 +127,10 @@ public partial class TiepNhanPhieuGoiMonViewModel : ControlTableViewModelBase
         TongTienTamTinhText = $"{total:N0} VND";
     }
 
-    /// <summary>
-    /// Executes synchronous partition management against the local master collection.
-    /// Safely pushes structural page updates without re-allocating reference boundaries.
-    /// </summary>
     protected override void OnPageChanged()
     {
-        UpdatePaginationInfo(OrderDetails.Count);
+        TotalItems = OrderDetails.Count;
+        UpdatePaginationInfo();
 
         PagedItems.Clear();
         var pageElements = OrderDetails.GetPage(PageNumber, PageSize);
@@ -158,8 +155,15 @@ public partial class TiepNhanPhieuGoiMonViewModel : ControlTableViewModelBase
         rowVm.OnItemChanged += RecalculateTotal;
         OrderDetails.Add(rowVm);
 
-        PageNumber = (int)Math.Ceiling((double)OrderDetails.Count / PageSize);
-        OnPageChanged();
+        int targetPage = (int)Math.Ceiling((double)OrderDetails.Count / PageSize);
+        if (PageNumber != targetPage)
+        {
+            PageNumber = targetPage;
+        }
+        else
+        {
+            OnPageChanged();
+        }
         RecalculateTotal();
     }
 
