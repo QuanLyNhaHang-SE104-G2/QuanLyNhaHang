@@ -54,7 +54,9 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
     public TraCuuBanAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _ = InitializeFormAsync();
+        InitializeFormAsync().SafeFireAndForget(onError: ex =>
+            MessageBox.Show($"Lỗi khởi tạo form: {ex.Message}", "Lỗi hệ thống",
+                MessageBoxButton.OK, MessageBoxImage.Error));
     }
 
     public async Task InitializeFormAsync()

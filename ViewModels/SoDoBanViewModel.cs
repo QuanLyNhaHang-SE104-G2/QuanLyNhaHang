@@ -24,7 +24,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
     {
         _dbContextFactory = dbContextFactory;
         _dialogService = dialogService;
-        _ = LoadDataAsync();
+        LoadDataAsync().SafeFireAndForget();
     }
 
     protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)

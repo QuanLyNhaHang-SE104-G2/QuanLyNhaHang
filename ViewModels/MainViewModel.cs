@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using QuanLyNhaHang.Extensions;
 
 namespace QuanLyNhaHang.ViewModels;
 
@@ -36,7 +37,7 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = true;
         IsThucDonActive = false;
         IsPosActive = false;
-        _ = _soDoBanViewModel.LoadDataAsync();
+        _soDoBanViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
     [RelayCommand]
@@ -46,7 +47,7 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = false;
         IsThucDonActive = true;
         IsPosActive = false;
-        _ = _monAnViewModel.LoadDataAsync();
+        _monAnViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
     [RelayCommand]
@@ -56,6 +57,6 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = false;
         IsThucDonActive = false;
         IsPosActive = true;
-        _ = _orderViewModel.LoadDataAsync();
+        _orderViewModel.LoadDataAsync().SafeFireAndForget();
     }
 }

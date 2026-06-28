@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using QuanLyNhaHang.Data;
+using QuanLyNhaHang.Extensions;
 using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
@@ -48,7 +49,9 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
     public TiepNhanBanAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _ = InitializeFormAsync();
+        InitializeFormAsync().SafeFireAndForget(onError: ex =>
+            MessageBox.Show($"Lỗi khởi tạo form: {ex.Message}", "Lỗi hệ thống",
+                MessageBoxButton.OK, MessageBoxImage.Error));
     }
 
     private void ClearFields()

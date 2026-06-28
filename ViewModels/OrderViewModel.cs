@@ -29,7 +29,7 @@ public partial class OrderViewModel : PaginatedViewModelBase
     {
         _dbContextFactory = dbContextFactory;
         _dialogService = dialogService;
-        _ = LoadDataAsync();
+        LoadDataAsync().SafeFireAndForget();
     }
 
     protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)

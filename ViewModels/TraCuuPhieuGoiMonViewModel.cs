@@ -50,7 +50,9 @@ public partial class TraCuuPhieuGoiMonViewModel : PaginatedViewModelBase
     {
         _dbContextFactory = dbContextFactory;
         PageSize = 10;
-        _ = InitializeFormAsync();
+        InitializeFormAsync().SafeFireAndForget(onError: ex =>
+            MessageBox.Show($"Lỗi khởi tạo form: {ex.Message}", "Lỗi hệ thống",
+                MessageBoxButton.OK, MessageBoxImage.Error));
     }
 
     public async Task InitializeFormAsync()
