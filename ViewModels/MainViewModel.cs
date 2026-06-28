@@ -7,6 +7,7 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly SoDoBanViewModel _soDoBanViewModel;
     private readonly MonAnViewModel _monAnViewModel;
+    private readonly OrderViewModel _orderViewModel;
 
     [ObservableProperty]
     private object? _currentViewModel;
@@ -17,10 +18,14 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isThucDonActive;
 
-    public MainViewModel(SoDoBanViewModel soDoBanViewModel, MonAnViewModel monAnViewModel)
+    [ObservableProperty]
+    private bool _isPosActive;
+
+    public MainViewModel(SoDoBanViewModel soDoBanViewModel, MonAnViewModel monAnViewModel, OrderViewModel orderViewModel)
     {
         _soDoBanViewModel = soDoBanViewModel;
         _monAnViewModel = monAnViewModel;
+        _orderViewModel = orderViewModel;
         CurrentViewModel = _soDoBanViewModel;
     }
 
@@ -30,6 +35,7 @@ public partial class MainViewModel : ObservableObject
         CurrentViewModel = _soDoBanViewModel;
         IsSoDoBanActive = true;
         IsThucDonActive = false;
+        IsPosActive = false;
         _ = _soDoBanViewModel.LoadDataAsync();
     }
 
@@ -39,6 +45,17 @@ public partial class MainViewModel : ObservableObject
         CurrentViewModel = _monAnViewModel;
         IsSoDoBanActive = false;
         IsThucDonActive = true;
+        IsPosActive = false;
         _ = _monAnViewModel.LoadDataAsync();
+    }
+
+    [RelayCommand]
+    private void NavigateToPos()
+    {
+        CurrentViewModel = _orderViewModel;
+        IsSoDoBanActive = false;
+        IsThucDonActive = false;
+        IsPosActive = true;
+        _ = _orderViewModel.LoadDataAsync();
     }
 }
