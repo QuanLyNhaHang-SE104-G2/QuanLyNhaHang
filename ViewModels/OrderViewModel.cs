@@ -34,27 +34,28 @@ public partial class OrderViewModel : PaginatedViewModelBase
 
     protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
-        async Task<List<PhieuGoiMon>> GetOrdersAsync()
+        async Task<(List<PhieuGoiMon> items, int total)> QueryOrdersAsync()
         {
             using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-            return await context.PhieuGoiMon
+            var query = context.PhieuGoiMon
                 .AsNoTrackingWithIdentityResolution()
-                .GetWithIncludes()
+                .GetWithIncludes();
+
+            int total = await query.CountAsync(cancellationToken);
+            var items = await query
                 .OrderByDescending(p => p.MaPhieuGoiMon)
                 .GetPage(PageNumber, PageSize)
                 .ToListAsync(cancellationToken);
+
+            return (items, total);
         }
-
-        using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
-        {
-            TotalItems = await context.PhieuGoiMon.AsNoTracking().CountAsync(cancellationToken);
-        }
-
-        UpdatePaginationInfo();
-
-        var rawOrders = await GetOrdersAsync();
 
         cancellationToken.ThrowIfCancellationRequested();
+
+        var (rawOrders, totalItems) = await QueryOrdersAsync();
+        TotalItems = totalItems;
+
+        UpdatePaginationInfo();
 
         int stt = (PageNumber - 1) * PageSize + 1;
         var page = new List<OrderItemViewModel>(rawOrders.Count);

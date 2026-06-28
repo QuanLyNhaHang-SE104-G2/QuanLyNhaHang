@@ -29,27 +29,28 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
 
     protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
-        async Task<List<Ban>> GetBansAsync()
+        async Task<(List<Ban> items, int total)> QueryBansAsync()
         {
             using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-            return await context.Ban
+            var query = context.Ban
                 .AsNoTrackingWithIdentityResolution()
-                .GetWithIncludes()
+                .GetWithIncludes();
+
+            int total = await query.CountAsync(cancellationToken);
+            var items = await query
                 .OrderBy(b => b.MaBan)
                 .GetPage(PageNumber, PageSize)
                 .ToListAsync(cancellationToken);
+
+            return (items, total);
         }
-
-        using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
-        {
-            TotalItems = await context.Ban.AsNoTracking().CountAsync(cancellationToken);
-        }
-
-        UpdatePaginationInfo();
-
-        var rawBans = await GetBansAsync();
 
         cancellationToken.ThrowIfCancellationRequested();
+
+        var (rawBans, totalItems) = await QueryBansAsync();
+        TotalItems = totalItems;
+
+        UpdatePaginationInfo();
 
         int stt = (PageNumber - 1) * PageSize + 1;
         var page = new List<BanItemViewModel>(rawBans.Count);

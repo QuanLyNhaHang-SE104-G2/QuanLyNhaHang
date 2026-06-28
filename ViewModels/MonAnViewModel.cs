@@ -32,27 +32,28 @@ public partial class MonAnViewModel : PaginatedViewModelBase
 
     protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
-        async Task<List<MonAn>> GetMonAnsAsync()
+        async Task<(List<MonAn> items, int total)> QueryMonAnsAsync()
         {
             using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-            return await context.MonAn
+            var query = context.MonAn
                 .AsNoTrackingWithIdentityResolution()
-                .GetWithIncludes()
+                .GetWithIncludes();
+
+            int total = await query.CountAsync(cancellationToken);
+            var items = await query
                 .OrderBy(m => m.MaMonAn)
                 .GetPage(PageNumber, PageSize)
                 .ToListAsync(cancellationToken);
-        }
-        
-        using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
-        {
-            TotalItems = await context.MonAn.AsNoTracking().CountAsync(cancellationToken);
-        }
-        
-        UpdatePaginationInfo();
 
-        var rawMonAns = await GetMonAnsAsync();
+            return (items, total);
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
+
+        var (rawMonAns, totalItems) = await QueryMonAnsAsync();
+        TotalItems = totalItems;
+
+        UpdatePaginationInfo();
 
         int stt = (PageNumber - 1) * PageSize + 1;
         var page = new List<MonAnItemViewModel>(rawMonAns.Count);
