@@ -77,7 +77,7 @@
         <!-- Detail Grid Table (ControlTable) -->
         <controls:ControlTable Grid.Row="2" Margin="0,0,0,15"
                                DishesSource="{Binding ActiveMonAns}"
-                               ItemsSource="{Binding OrderDetails}"
+                               ItemsSource="{Binding PagedItems}"
                                SelectedItem="{Binding SelectedOrderDetail}"
                                AddRowCommand="{Binding AddRowCommand}"
                                PageSize="{Binding PageSize, Mode=TwoWay}"
@@ -87,7 +87,7 @@
                                NextPageCommand="{Binding NextPageCommand}"
                                PageSizes="{Binding PageSizes}"
                                PageNumbers="{Binding PageNumbers}">
-            <DataGrid ItemsSource="{Binding OrderDetails}" SelectedItem="{Binding SelectedOrderDetail}" Style="{StaticResource GeneralDataGrid}" Height="230"
+            <DataGrid ItemsSource="{Binding PagedItems}" SelectedItem="{Binding SelectedOrderDetail}" Style="{StaticResource GeneralDataGrid}" Height="230"
                       Validation.ErrorTemplate="{x:Null}"
                       ScrollViewer.CanContentScroll="True"
                       ScrollViewer.VerticalScrollBarVisibility="Auto"

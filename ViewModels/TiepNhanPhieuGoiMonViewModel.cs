@@ -14,9 +14,11 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
+public partial class TiepNhanPhieuGoiMonViewModel : ControlTableViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+
+    protected override string EntityLabel => "món ăn";
 
     [ObservableProperty]
     private int _maPhieuGoiMon;
@@ -54,24 +56,11 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
     [ObservableProperty]
     private ObservableCollection<CTGoiMonItemViewModel> _orderDetails = [];
 
-    // Paging properties for details
     [ObservableProperty]
-    private int _pageNumber = 1;
+    private ObservableCollection<CTGoiMonItemViewModel> _pagedItems = [];
 
     [ObservableProperty]
-    private int _pageSize = 5;
-
-    [ObservableProperty]
-    private int _totalItems;
-
-    [ObservableProperty]
-    private int _totalPages;
-
-    [ObservableProperty]
-    private string _paginationInfo = "Trang 1 / 1";
-
-    [ObservableProperty]
-    private ObservableCollection<CTGoiMonItemViewModel> _pagedOrderDetails = [];
+    private CTGoiMonItemViewModel? _selectedOrderDetail;
 
     public TiepNhanPhieuGoiMonViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
     {
@@ -89,6 +78,7 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
         SelectedMaTrangThai = "";
         ThoiGianGoi = DateTime.Now;
         TongTienTamTinhText = "0 VND";
+        SelectedOrderDetail = null;
         OrderDetails.Clear();
     }
 
@@ -96,7 +86,6 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
     {
         ClearFields();
 
-        // Load lookup databases
         using (var context = await _dbContextFactory.CreateDbContextAsync())
         {
             Bans = await context.Ban.AsNoTracking().OrderBy(b => b.TenBan).ToListAsync();
@@ -110,13 +99,12 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
                 .ToListAsync();
         }
 
-        // Set defaults
         if (NhanViens.Count > 0) SelectedMaNhanVien = NhanViens[0].MaNhanVien;
         if (TrangThais.Count > 0) SelectedMaTrangThai = TrangThais[0].MaTrangThai;
 
         await GenerateNextMaPhieuGoiMonAsync();
 
-        UpdatePaginationInfo();
+        OnPageChanged();
     }
 
     private async Task GenerateNextMaPhieuGoiMonAsync()
@@ -139,27 +127,19 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
         TongTienTamTinhText = $"{total:N0} VND";
     }
 
-    private void UpdatePaginationInfo()
+    /// <summary>
+    /// Executes synchronous partition management against the local master collection.
+    /// Safely pushes structural page updates without re-allocating reference boundaries.
+    /// </summary>
+    protected override void OnPageChanged()
     {
-        TotalItems = OrderDetails.Count;
-        TotalPages = (int)Math.Ceiling((double)TotalItems / PageSize);
-        if (TotalPages < 1) TotalPages = 1;
+        UpdatePaginationInfo(OrderDetails.Count);
 
-        if (PageNumber > TotalPages) PageNumber = TotalPages;
-        if (PageNumber < 1) PageNumber = 1;
-
-        PaginationInfo = $"Trang {PageNumber} / {TotalPages}";
-
-        // Populate paged items
-        PagedOrderDetails.Clear();
-        var pageItems = OrderDetails
-            .Skip((PageNumber - 1) * PageSize)
-            .Take(PageSize)
-            .ToList();
-
-        foreach (var item in pageItems)
+        PagedItems.Clear();
+        var pageElements = OrderDetails.GetPage(PageNumber, PageSize);
+        foreach (var item in pageElements)
         {
-            PagedOrderDetails.Add(item);
+            PagedItems.Add(item);
         }
     }
 
@@ -178,70 +158,34 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
         rowVm.OnItemChanged += RecalculateTotal;
         OrderDetails.Add(rowVm);
 
-        // Switch to the page containing the new row
         PageNumber = (int)Math.Ceiling((double)OrderDetails.Count / PageSize);
-        UpdatePaginationInfo();
+        OnPageChanged();
         RecalculateTotal();
     }
 
     [RelayCommand]
-    private void RemoveRow(CTGoiMonItemViewModel? row)
+    private void DeleteRow(CTGoiMonItemViewModel? row)
     {
         if (row != null)
         {
             row.OnItemChanged -= RecalculateTotal;
             OrderDetails.Remove(row);
 
-            // Re-index STT
             int stt = 1;
             foreach (var item in OrderDetails)
             {
                 item.STT = stt++;
             }
 
-            UpdatePaginationInfo();
+            OnPageChanged();
             RecalculateTotal();
         }
     }
 
     [RelayCommand]
-    private void MoveToFirstPage()
+    private async Task ResetAsync()
     {
-        if (PageNumber != 1)
-        {
-            PageNumber = 1;
-            UpdatePaginationInfo();
-        }
-    }
-
-    [RelayCommand]
-    private void MoveToPreviousPage()
-    {
-        if (PageNumber > 1)
-        {
-            PageNumber--;
-            UpdatePaginationInfo();
-        }
-    }
-
-    [RelayCommand]
-    private void MoveToNextPage()
-    {
-        if (PageNumber < TotalPages)
-        {
-            PageNumber++;
-            UpdatePaginationInfo();
-        }
-    }
-
-    [RelayCommand]
-    private void MoveToLastPage()
-    {
-        if (PageNumber != TotalPages)
-        {
-            PageNumber = TotalPages;
-            UpdatePaginationInfo();
-        }
+        await InitializeFormAsync();
     }
 
     [RelayCommand]
@@ -256,7 +200,6 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
             return;
         }
 
-        // Validate all detail rows
         foreach (var row in OrderDetails)
         {
             row.ValidateRow();
@@ -267,7 +210,6 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
             }
         }
 
-        // An order ticket must not be empty
         var activeRows = OrderDetails.Where(row => row.SelectedMaMonAn.HasValue).ToList();
         if (activeRows.Count == 0)
         {
@@ -318,10 +260,6 @@ public partial class TiepNhanPhieuGoiMonViewModel : ObservableValidator
             }
             catch (DbUpdateException ex) when (ex.IsPrimaryKeyViolation() && attempt < maxRetries - 1)
             {
-                // PK collision (TOCTOU): re-generate the order ID and retry.
-                // The CTGoiMon details reference MaPhieuGoiMon, but since we
-                // rebuild newOrder and its details inside the loop, the fresh
-                // MaPhieuGoiMon is used automatically.
                 await GenerateNextMaPhieuGoiMonAsync();
             }
             catch (Exception ex)
