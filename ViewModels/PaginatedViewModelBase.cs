@@ -32,18 +32,28 @@ public abstract partial class PaginatedViewModelBase : ObservableObject, IDispos
 
     public async Task LoadDataAsync()
     {
-        // Atomically swap in a new CTS before touching the old one, so an
-        // in-flight OnLoadDataAsync observing the previous token is cancelled
-        // (not disposed-under-it).
+        if (_disposed) return;
+
         var newCts = new CancellationTokenSource();
         var oldCts = Interlocked.Exchange(ref _cts, newCts);
 
-        try
+        // Always cancel the displaced token immediately to abort the prior operation
+        if (oldCts != null)
         {
-            oldCts?.Cancel();
+            try { oldCts.Cancel(); } catch (ObjectDisposedException) { }
+            oldCts.Dispose();
         }
-        catch (ObjectDisposedException) { }
-        oldCts?.Dispose();
+
+        // Evaluate if disposal occurred during the token exchange step
+        if (_disposed)
+        {
+            try { newCts.Cancel(); } catch (ObjectDisposedException) { }
+            newCts.Dispose();
+
+            // Safely clear _cts if it still points to our local newCts instance
+            Interlocked.CompareExchange(ref _cts, null, newCts);
+            return;
+        }
 
         var token = newCts.Token;
         try
@@ -140,6 +150,8 @@ public abstract partial class PaginatedViewModelBase : ObservableObject, IDispos
             return;
         }
 
+        _disposed = true;
+
         var cts = Interlocked.Exchange(ref _cts, null);
         try
         {
@@ -147,7 +159,5 @@ public abstract partial class PaginatedViewModelBase : ObservableObject, IDispos
         }
         catch (ObjectDisposedException) { }
         cts?.Dispose();
-
-        _disposed = true;
     }
 }
