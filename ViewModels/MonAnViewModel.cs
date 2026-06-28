@@ -59,7 +59,7 @@ public partial class MonAnViewModel : PaginatedViewModelBase
             MonAns.Add(new MonAnItemViewModel
             {
                 STT = stt++,
-                MaMonAn = monAn.MaMonAn.ToString("D3"),
+                MaMonAn = monAn.MaMonAn,
                 TenMonAn = monAn.TenMonAn,
                 TenLoaiMonAn = monAn.LoaiMonAn?.TenLoaiMonAn ?? "",
                 TenDonViTinh = monAn.DonViTinh?.TenDonViTinh ?? "",

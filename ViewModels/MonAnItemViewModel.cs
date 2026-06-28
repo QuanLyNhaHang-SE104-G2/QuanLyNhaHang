@@ -8,7 +8,7 @@ public partial class MonAnItemViewModel : ObservableObject
     private int _sTT;
 
     [ObservableProperty]
-    private string _maMonAn = "";
+    private int _maMonAn;
 
     [ObservableProperty]
     private string _tenMonAn = "";

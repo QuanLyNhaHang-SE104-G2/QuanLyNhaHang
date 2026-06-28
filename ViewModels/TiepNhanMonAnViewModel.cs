@@ -17,7 +17,7 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
     [ObservableProperty]
-    private string _maMonAn = "";
+    private int _maMonAn;
 
     [ObservableProperty]
     [Required(ErrorMessage = "Tên món ăn không được để trống.")]
@@ -103,7 +103,7 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
         }
 
         int maxId = await GetMaxIdAsync();
-        MaMonAn = $"{(maxId + 1):D3}";
+        MaMonAn = maxId + 1;
     }
 
     private async Task UpdateAllowedDonViTinhsAsync(string? maLoaiMonAn)
@@ -170,7 +170,7 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
 
         var newMonAn = new MonAn
         {
-            MaMonAn = int.Parse(MaMonAn),
+            MaMonAn = MaMonAn,
             TenMonAn = TenMonAn,
             DonGia = donGia,
             MaLoaiMonAn = SelectedMaLoaiMonAn,

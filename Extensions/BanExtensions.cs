@@ -13,7 +13,7 @@ public static class BanExtensions
 
     public static IQueryable<Ban> Filter(
         this IQueryable<Ban> query,
-        string? maBan,
+        int? maBan,
         string? tenBan,
         string? khuVuc,
         string? maLoaiBan,
@@ -22,9 +22,9 @@ public static class BanExtensions
         long? minPhuThu,
         long? maxPhuThu)
     {
-        if (!string.IsNullOrWhiteSpace(maBan) && int.TryParse(maBan, out int idVal))
+        if (maBan.HasValue)
         {
-            query = query.Where(b => b.MaBan == idVal);
+            query = query.Where(b => b.MaBan == maBan.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(tenBan))

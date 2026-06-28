@@ -16,7 +16,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
     [ObservableProperty]
-    private string _maBan = "";
+    private int _maBan;
 
     [ObservableProperty]
     [Required(ErrorMessage = "Tên bàn ăn không được để trống.")]
@@ -90,7 +90,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
             return maxId ?? 0;
         }
         int maxId = await GetMaxIdAsync();
-        MaBan = $"{(maxId + 1):D2}";
+        MaBan = maxId + 1;
     }
 
     private void UpdatePhuThu(LoaiBan? loaiBan)
@@ -143,11 +143,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
         async Task<bool> TableExistsAsync()
         {
             using var context = await _dbContextFactory.CreateDbContextAsync();
-            if (int.TryParse(MaBan, out int idVal))
-            {
-                return await context.Ban.AnyAsync(b => b.MaBan == idVal);
-            }
-            return false;
+            return await context.Ban.AnyAsync(b => b.MaBan == MaBan);
         }
 
         ValidateAllProperties();
@@ -172,7 +168,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
         {
             var newBan = new Ban
             {
-                MaBan = int.Parse(MaBan),
+                MaBan = MaBan,
                 TenBan = TenBan,
                 KhuVuc = KhuVuc,
                 SoChoNgoi = seats,

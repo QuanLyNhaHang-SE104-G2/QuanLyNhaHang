@@ -55,7 +55,7 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
             Bans.Add(new BanItemViewModel
             {
                 STT = stt++,
-                MaBan = ban.MaBan.ToString("D2"),
+                MaBan = ban.MaBan,
                 TenBan = ban.TenBan,
                 KhuVuc = ban.KhuVuc,
                 SoChoNgoi = ban.SoChoNgoi,

@@ -106,6 +106,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
             return;
         }
 
+        int? searchMaBan = int.TryParse(MaBan, out int parsedMaBan) ? parsedMaBan : null;
         int? minSeats = int.TryParse(SoChoNgoiTu, out int minS) ? minS : null;
         int? maxSeats = int.TryParse(SoChoNgoiDen, out int maxS) ? maxS : null;
         long? minPhuThu = long.TryParse(PhuThuTu, out long minP) ? minP : null;
@@ -118,7 +119,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
             var query = context.Ban
                 .AsNoTrackingWithIdentityResolution()
                 .GetWithIncludes()
-                .Filter(MaBan, TenBan, KhuVuc, SelectedMaLoaiBan, minSeats, maxSeats, minPhuThu, maxPhuThu);
+                .Filter(searchMaBan, TenBan, KhuVuc, SelectedMaLoaiBan, minSeats, maxSeats, minPhuThu, maxPhuThu);
 
             TotalItems = await query.CountAsync(cancellationToken);
             UpdatePaginationInfo();
@@ -137,7 +138,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
             tempList.Add(new BanItemViewModel
             {
                 STT = stt++,
-                MaBan = ban.MaBan.ToString("D2"),
+                MaBan = ban.MaBan,
                 TenBan = ban.TenBan,
                 KhuVuc = ban.KhuVuc,
                 SoChoNgoi = ban.SoChoNgoi,

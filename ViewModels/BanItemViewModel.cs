@@ -8,7 +8,7 @@ public partial class BanItemViewModel : ObservableObject
     private int _sTT;
 
     [ObservableProperty]
-    private string _maBan = "";
+    private int _maBan;
 
     [ObservableProperty]
     private string _tenBan = "";
