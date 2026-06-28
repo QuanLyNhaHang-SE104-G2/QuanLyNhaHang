@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
+using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using QuanLyNhaHang.Extensions;
 
 namespace QuanLyNhaHang.ViewModels;
 
@@ -30,19 +32,26 @@ public abstract partial class PaginatedViewModelBase : ObservableObject, IDispos
 
     public async Task LoadDataAsync()
     {
-        _cts?.Cancel();
-        _cts?.Dispose();
-        _cts = new CancellationTokenSource();
-        var token = _cts.Token;
+        // Atomically swap in a new CTS before touching the old one, so an
+        // in-flight OnLoadDataAsync observing the previous token is cancelled
+        // (not disposed-under-it).
+        var newCts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _cts, newCts);
 
+        try
+        {
+            oldCts?.Cancel();
+        }
+        catch (ObjectDisposedException) { }
+        oldCts?.Dispose();
+
+        var token = newCts.Token;
         try
         {
             await OnLoadDataAsync(token);
         }
-        catch (OperationCanceledException)
-        {
-            // Ignore cancellation
-        }
+        catch (OperationCanceledException) { }
+        catch (ObjectDisposedException) { }
     }
 
     protected abstract Task OnLoadDataAsync(CancellationToken cancellationToken);
@@ -108,7 +117,7 @@ public abstract partial class PaginatedViewModelBase : ObservableObject, IDispos
     {
         if (PageNumber == 1)
         {
-            _ = LoadDataAsync();
+            LoadDataAsync().SafeFireAndForget();
         }
         else
         {
@@ -120,7 +129,7 @@ public abstract partial class PaginatedViewModelBase : ObservableObject, IDispos
     {
         if (value >= 1)
         {
-            _ = LoadDataAsync();
+            LoadDataAsync().SafeFireAndForget();
         }
     }
 
@@ -131,9 +140,13 @@ public abstract partial class PaginatedViewModelBase : ObservableObject, IDispos
             return;
         }
 
-        _cts?.Cancel();
-        _cts?.Dispose();
-        _cts = null;
+        var cts = Interlocked.Exchange(ref _cts, null);
+        try
+        {
+            cts?.Cancel();
+        }
+        catch (ObjectDisposedException) { }
+        cts?.Dispose();
 
         _disposed = true;
     }
