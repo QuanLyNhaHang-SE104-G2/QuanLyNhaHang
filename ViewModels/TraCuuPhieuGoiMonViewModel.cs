@@ -17,6 +17,7 @@ namespace QuanLyNhaHang.ViewModels;
 public partial class TraCuuPhieuGoiMonViewModel : PaginatedViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+    private bool _hasSearched;
 
     protected override string EntityLabel => "đơn";
 
@@ -65,13 +66,20 @@ public partial class TraCuuPhieuGoiMonViewModel : PaginatedViewModelBase
             .ToList();
 
         SelectedMaTrangThai = "All";
-        Orders.Clear();
-        TotalItems = 0;
-        UpdatePaginationInfo();
+        _hasSearched = false;
+        await LoadDataAsync();
     }
 
     protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
+        if (!_hasSearched)
+        {
+            Orders = [];
+            TotalItems = 0;
+            UpdatePaginationInfo();
+            return;
+        }
+
         int? searchMaPhieuGoiMon = int.TryParse(MaPhieuGoiMon, out int parsedId) ? parsedId : null;
 
         long? minTotal = null;
@@ -80,31 +88,29 @@ public partial class TraCuuPhieuGoiMonViewModel : PaginatedViewModelBase
         long? maxTotal = null;
         if (long.TryParse(TongTienDen, out long maxVal)) maxTotal = maxVal;
 
-        async Task<List<PhieuGoiMon>> QueryOrdersAsync()
+        cancellationToken.ThrowIfCancellationRequested();
+
+        async Task<(List<PhieuGoiMon> items, int total)> QueryOrdersAsync()
         {
             using var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-            return await context.PhieuGoiMon
+            var query = context.PhieuGoiMon
                 .AsNoTrackingWithIdentityResolution()
                 .GetWithIncludes()
-                .Filter(searchMaPhieuGoiMon, TenBan, TenNhanVien, SelectedMaTrangThai, minTotal, maxTotal)
+                .Filter(searchMaPhieuGoiMon, TenBan, TenNhanVien, SelectedMaTrangThai, minTotal, maxTotal);
+
+            int total = await query.CountAsync(cancellationToken);
+            var items = await query
                 .OrderByDescending(p => p.MaPhieuGoiMon)
                 .GetPage(PageNumber, PageSize)
                 .ToListAsync(cancellationToken);
+
+            return (items, total);
         }
 
-        using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
-        {
-            TotalItems = await context.PhieuGoiMon
-                .AsNoTracking()
-                .Filter(searchMaPhieuGoiMon, TenBan, TenNhanVien, SelectedMaTrangThai, minTotal, maxTotal)
-                .CountAsync(cancellationToken);
-        }
+        var (rawOrders, totalItems) = await QueryOrdersAsync();
+        TotalItems = totalItems;
 
         UpdatePaginationInfo();
-
-        var rawOrders = await QueryOrdersAsync();
-
-        cancellationToken.ThrowIfCancellationRequested();
 
         int stt = (PageNumber - 1) * PageSize + 1;
         var page = new List<OrderItemViewModel>(rawOrders.Count);
@@ -115,7 +121,7 @@ public partial class TraCuuPhieuGoiMonViewModel : PaginatedViewModelBase
                 STT = stt++,
                 MaPhieuGoiMon = order.MaPhieuGoiMon,
                 TenBan = order.Ban?.TenBan ?? "",
-                ThoiGianGoiText = $"{order.ThoiGianGoi.ToString("hh:mm tt", System.Globalization.CultureInfo.InvariantCulture)} Hôm nay",
+                ThoiGianGoiText = order.ThoiGianGoi.ToString("yyyy-MM-dd HH:mm"),
                 TenNhanVien = order.NhanVien?.TenNhanVien ?? "",
                 TenTrangThai = order.TrangThai?.TenTrangThai ?? "",
                 MaTrangThai = order.MaTrangThai,
@@ -129,6 +135,7 @@ public partial class TraCuuPhieuGoiMonViewModel : PaginatedViewModelBase
     [RelayCommand]
     private async Task SearchAsync()
     {
+        _hasSearched = true;
         PageNumber = 1;
         await LoadDataAsync();
     }
