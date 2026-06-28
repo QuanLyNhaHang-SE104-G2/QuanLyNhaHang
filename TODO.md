@@ -1,11 +1,26 @@
 # TODO
 
 - Decouple Services, Views and ViewModels completely
-- Make popup windows "dialog" instead.
-- Migrate ViewModel DTOs into View-formatted displays
-- Check `_phuThuVal` in `TiepNhanBanAnViewModel`
-- Eliminate transient 'LoaiBan' entity models featuring fabricated primary keys ("All") to populate presentation layer dropdown selections.
-    1. Extract a presentation DTO or record type: 'public record LoaiBanOption(string Id, string DisplayName);'
-    2. Change the view model state variable '_loaiBans' from 'ObservableCollection<LoaiBan>' to 'ObservableCollection<LoaiBanOption>'.
-    3. Update 'InitializeFormAsync' to project the database records directly into this option type using a clean LINQ '.Select()' block, and prepend the UI-specific sentinel option securely using '.Prepend(new LoaiBanOption("All", "Tất cả"))'.
-    4. Adjust the corresponding ComboBox bindings inside 'TraCuuBanAnWindow.xaml' to target 'SelectedValuePath="Id"' and 'DisplayMemberPath="DisplayName"'.
+- Make popup windows proper "dialogs".
+- Migrate ViewModel DTOs into View-formatted displays and proper DTOs
+
+## Concurrency / Background Thread Safety
+
+- `SafeFireAndForget` uses `ConfigureAwait(true)`. If any fire-and-forget is ever invoked from a background thread, continuations will lack the Dispatcher and UI property updates will throw.
+- `TiepNhanPhieuGoiMonViewModel` modifies `OrderDetails` (ObservableCollection) from command handlers with no explicit thread-affinity assertion. May break if background access is ever introduced.
+- `UpdateAllowedDonViTinhs` was made synchronous (pre-loaded lookup data, in-memory filter). If the lookup table grows or network latency is introduced (e.g., remote DB), it may need to revert to async with proper cancellation. Changed to avoid fire-and-forget unsafety. Potential user annoyance if LoaiMonAn or DVT or LoaiMonAn-DVT is updated in the background while the popup is open.
+
+## Navigation
+
+- Refactor `MainViewModel` navigation state — the growing list of `Is[Page]Active` boolean flags and `NavigateTo[Page]` commands does not scale. Consider a navigation model with a single `ActivePage` enum and a shared `Navigate` command, or a dictionary-based active-state lookup.
+
+## TraCuuBanAnViewModel - Note
+
+```cs
+            using var context = await _dbContextFactory.CreateDbContextAsync();
+            return await context.LoaiBan
+                .AsNoTracking()
+                .OrderBy(l => l.PhuThu)
+                .Select(l => new LoaiBanOption(l.MaLoaiBan, l.TenLoaiBan))
+                .ToListAsync();
+```
