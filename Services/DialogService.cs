@@ -68,4 +68,10 @@ public class DialogService : IDialogService
 
     public void ShowTraCuuPhieuGoiMonDialog(Window? owner)
         => ShowDialogNoResult<TraCuuPhieuGoiMonWindow, TraCuuPhieuGoiMonViewModel>(owner);
+
+    public bool? ShowTiepNhanHoaDonDialog(Window? owner)
+        => ShowDialog<TiepNhanHoaDonWindow, TiepNhanHoaDonViewModel>(owner);
+
+    public void ShowTraCuuHoaDonDialog(Window? owner)
+        => ShowDialogNoResult<TraCuuHoaDonWindow, TraCuuHoaDonViewModel>(owner);
 }

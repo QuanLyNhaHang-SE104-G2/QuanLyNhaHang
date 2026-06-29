@@ -42,6 +42,9 @@ public partial class App : Application
         services.AddTransient<OrderViewModel>();
         services.AddTransient<TiepNhanPhieuGoiMonViewModel>();
         services.AddTransient<TraCuuPhieuGoiMonViewModel>();
+        services.AddTransient<HoaDonViewModel>();
+        services.AddTransient<TiepNhanHoaDonViewModel>();
+        services.AddTransient<TraCuuHoaDonViewModel>();
         services.AddTransient<MainViewModel>();
         return services.BuildServiceProvider(
             new ServiceProviderOptions

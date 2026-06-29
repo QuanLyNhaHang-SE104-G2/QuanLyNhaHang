@@ -9,6 +9,7 @@ public partial class MainViewModel : ObservableObject
     private readonly SoDoBanViewModel _soDoBanViewModel;
     private readonly OrderViewModel _orderViewModel;
     private readonly MonAnViewModel _monAnViewModel;
+    private readonly HoaDonViewModel _hoaDonViewModel;
 
     [ObservableProperty]
     private object? _currentViewModel;
@@ -22,11 +23,19 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isPosActive;
 
-    public MainViewModel(SoDoBanViewModel soDoBanViewModel, OrderViewModel orderViewModel, MonAnViewModel monAnViewModel)
+    [ObservableProperty]
+    private bool _isHoaDonActive;
+
+    public MainViewModel(
+        SoDoBanViewModel soDoBanViewModel, 
+        OrderViewModel orderViewModel, 
+        MonAnViewModel monAnViewModel,
+        HoaDonViewModel hoaDonViewModel)
     {
         _soDoBanViewModel = soDoBanViewModel;
         _orderViewModel = orderViewModel;
         _monAnViewModel = monAnViewModel;
+        _hoaDonViewModel = hoaDonViewModel;
         CurrentViewModel = _soDoBanViewModel;
     }
 
@@ -37,6 +46,7 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = true;
         IsThucDonActive = false;
         IsPosActive = false;
+        IsHoaDonActive = false;
         _soDoBanViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
@@ -47,6 +57,7 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = false;
         IsThucDonActive = false;
         IsPosActive = true;
+        IsHoaDonActive = false;
         _orderViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
@@ -57,6 +68,18 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = false;
         IsThucDonActive = true;
         IsPosActive = false;
+        IsHoaDonActive = false;
         _monAnViewModel.LoadDataAsync().SafeFireAndForget();
+    }
+
+    [RelayCommand]
+    private void NavigateToHoaDon()
+    {
+        CurrentViewModel = _hoaDonViewModel;
+        IsSoDoBanActive = false;
+        IsThucDonActive = false;
+        IsPosActive = false;
+        IsHoaDonActive = true;
+        _hoaDonViewModel.LoadDataAsync().SafeFireAndForget();
     }
 }
