@@ -1,0 +1,47 @@
+<UserControl x:Class="QuanLyNhaHang.Views.HoaDonView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+             xmlns:controls="clr-namespace:QuanLyNhaHang.Controls"
+             Background="{StaticResource BackgroundBrush}">
+    <controls:PaginatedView Title="Hóa đơn thanh toán"
+        PageSize="{Binding PageSize, Mode=TwoWay}"
+        PageNumber="{Binding PageNumber, Mode=TwoWay}"
+        TotalInfoText="{Binding TotalInfoText}"
+        PrevPageCommand="{Binding PrevPageCommand}"
+        NextPageCommand="{Binding NextPageCommand}"
+        PageSizes="{Binding PageSizes}"
+        PageNumbers="{Binding PageNumbers}">
+
+        <controls:PaginatedView.ButtonContent>
+            <StackPanel Orientation="Horizontal">
+                <Button Style="{StaticResource ButtonPrimary}" Command="{Binding AddHoaDonCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Plus" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Thanh toán" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Content="Xóa" Style="{StaticResource ButtonDanger}" Margin="0,0,10,0"/>
+                <Button Content="Sửa" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"/>
+                <Button Content="Tra cứu" Style="{StaticResource ButtonSecondary}" Command="{Binding SearchHoaDonCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,10,0"/>
+            </StackPanel>
+        </controls:PaginatedView.ButtonContent>
+
+        <controls:PaginatedView.MainContent>
+            <DataGrid ItemsSource="{Binding Invoices}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
+                      Validation.ErrorTemplate="{x:Null}"
+                      ScrollViewer.CanContentScroll="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}"/>
+                    <DataGridTextColumn Header="MÃ HÓA ĐƠN" Width="120" Binding="{Binding MaHoaDon}"/>
+                    <DataGridTextColumn Header="BÀN" Width="120" Binding="{Binding TenBan}"/>
+                    <DataGridTextColumn Header="THỜI GIAN" Width="*" Binding="{Binding ThoiGianThanhToanText}"/>
+                    <DataGridTextColumn Header="PHỤ THU" Width="120" Binding="{Binding PhuThuText}"/>
+                    <DataGridTextColumn Header="TỔNG TIỀN" Width="*" Binding="{Binding TongTienText}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </controls:PaginatedView.MainContent>
+    </controls:PaginatedView>
+</UserControl>
