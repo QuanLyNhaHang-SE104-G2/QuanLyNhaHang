@@ -4,82 +4,138 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QuanLyNhaHang.Views"
+        xmlns:controls="clr-namespace:QuanLyNhaHang.Controls"
         xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
         mc:Ignorable="d"
-        Title="" Height="450" Width="600"
+        Title="" Height="650" Width="850"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
         ShowInTaskbar="False"
         Background="White">
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <!-- Header -->
             <RowDefinition Height="Auto"/>
-            <!-- Form Body -->
+            <!-- Ticket Info Header Form -->
+            <RowDefinition Height="Auto"/>
+            <!-- Detail Grid Table (ControlTable) -->
             <RowDefinition Height="*"/>
             <!-- Footer Buttons -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,20">
+        <Grid Grid.Row="0" Margin="0,0,0,15">
             <TextBlock Text="Tiếp nhận món ăn" FontSize="20" FontWeight="Bold" VerticalAlignment="Center"/>
         </Grid>
 
-        <!-- Form Body -->
-        <Border Grid.Row="1" Background="{StaticResource BackgroundBrush}" CornerRadius="8" Padding="15" Margin="0,0,0,20">
+        <!-- Ticket Info Header Form -->
+        <Border Grid.Row="1" Background="{StaticResource BackgroundBrush}" CornerRadius="8" Padding="15" Margin="0,0,0,15">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="160"/>
-                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-
-                <!-- Row 0: Mã món ăn & Tên món ăn -->
-                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,12">
-                    <TextBlock Text="Mã món ăn" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="{StaticResource TextSecondaryBrush}"/>
-                    <TextBox Style="{StaticResource InputTextBoxReadOnly}" Text="{Binding MaMonAn, Mode=OneWay}"/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" Margin="0,0,0,12">
-                    <TextBlock Text="Tên món ăn" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                    <TextBox x:Name="TxtTenMonAn" Style="{StaticResource InputTextBox}" Text="{Binding TenMonAn, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-
-                <!-- Row 1: Loại món ăn & Đơn vị tính -->
-                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,12">
+                <StackPanel Grid.Column="0">
                     <TextBlock Text="Loại món ăn" FontWeight="SemiBold" Margin="0,0,0,5"/>
                     <ComboBox x:Name="CbLoaiMonAn" Style="{StaticResource InputComboBox}" ItemsSource="{Binding LoaiMonAns}" SelectedValue="{Binding SelectedMaLoaiMonAn}" DisplayMemberPath="TenLoaiMonAn" SelectedValuePath="MaLoaiMonAn"/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,12">
-                    <TextBlock Text="Đơn vị tính" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="CbDonViTinh" Style="{StaticResource InputComboBox}" ItemsSource="{Binding AllowedDonViTinhs}" SelectedValue="{Binding SelectedMaDonViTinh}" DisplayMemberPath="TenDonViTinh" SelectedValuePath="MaDonViTinh"/>
-                </StackPanel>
-
-                <!-- Row 2: Đơn giá & Tình trạng -->
-                <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,12">
-                    <TextBlock Text="Đơn giá" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                    <TextBox x:Name="TxtDonGia" Style="{StaticResource InputTextBox}" Text="{Binding DonGia, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-
-                <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,12">
-                    <TextBlock Text="Tình trạng" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="CbTinhTrang" Style="{StaticResource InputComboBox}" ItemsSource="{Binding TinhTrangs}" SelectedValue="{Binding SelectedMaTinhTrang}" DisplayMemberPath="TenTinhTrang" SelectedValuePath="MaTinhTrang"/>
                 </StackPanel>
             </Grid>
         </Border>
 
+        <!-- Detail Grid Table (ControlTable) -->
+        <controls:ControlTable Grid.Row="2" Margin="0,0,0,15"
+                               VerticalAlignment="Stretch"
+                               ItemsSource="{Binding PagedItems}"
+                               SelectedItem="{Binding SelectedMonAn}"
+                               AddRowCommand="{Binding AddRowCommand}"
+                               PageSize="{Binding PageSize, Mode=TwoWay}"
+                               PageNumber="{Binding PageNumber, Mode=TwoWay}"
+                               TotalInfoText="{Binding TotalInfoText}"
+                               PrevPageCommand="{Binding PrevPageCommand}"
+                               NextPageCommand="{Binding NextPageCommand}"
+                               PageSizes="{Binding PageSizes}"
+                               PageNumbers="{Binding PageNumbers}">
+            <DataGrid ItemsSource="{Binding PagedItems}" SelectedItem="{Binding SelectedMonAn}"
+                      Style="{StaticResource GeneralDataGrid}"
+                      VerticalScrollBarVisibility="Visible"
+                      Validation.ErrorTemplate="{x:Null}"
+                      ScrollViewer.CanContentScroll="True"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}" IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTemplateColumn Header="TÊN MÓN ĂN" Width="2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Style="{StaticResource InputTextBox}"
+                                         VerticalAlignment="Center" Margin="2"
+                                         Text="{Binding TenMonAn, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="ĐƠN VỊ TÍNH" Width="1.5*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox Style="{StaticResource InputComboBox}"
+                                          VerticalAlignment="Center" Margin="2"
+                                          ItemsSource="{Binding DataContext.AllowedDonViTinhs, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                          SelectedValue="{Binding SelectedMaDonViTinh, UpdateSourceTrigger=PropertyChanged}"
+                                          DisplayMemberPath="TenDonViTinh"
+                                          SelectedValuePath="MaDonViTinh"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="TÌNH TRẠNG" Width="1.5*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox Style="{StaticResource InputComboBox}"
+                                          VerticalAlignment="Center" Margin="2"
+                                          ItemsSource="{Binding DataContext.TinhTrangs, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                          SelectedValue="{Binding SelectedMaTinhTrang, UpdateSourceTrigger=PropertyChanged}"
+                                          DisplayMemberPath="TenTinhTrang"
+                                          SelectedValuePath="MaTinhTrang"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="ĐƠN GIÁ" Width="1.5*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Style="{StaticResource InputTextBox}"
+                                         VerticalAlignment="Center" Margin="2"
+                                         Text="{Binding DonGia, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="THAO TÁC" Width="90">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource ButtonDanger}" Padding="6,4" 
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Command="{Binding DataContext.DeleteRowCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                        CommandParameter="{Binding}">
+                                    <fa:IconBlock Icon="Trash" FontSize="12"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </controls:ControlTable>
+
         <!-- Footer Buttons -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Button x:Name="BtnAccept" Style="{StaticResource ButtonPrimary}" HorizontalAlignment="Left" Command="{Binding AcceptCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                 <StackPanel Orientation="Horizontal">
                     <fa:IconBlock Icon="Plus" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>

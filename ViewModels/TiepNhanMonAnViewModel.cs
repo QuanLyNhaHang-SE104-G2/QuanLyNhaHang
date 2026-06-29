@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,32 +14,15 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public partial class TiepNhanMonAnViewModel : ObservableValidator
+public partial class TiepNhanMonAnViewModel : ControlTableViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
-    [ObservableProperty]
-    private int _maMonAn;
-
-    [ObservableProperty]
-    [Required(ErrorMessage = "Tên món ăn không được để trống.")]
-    private string _tenMonAn = "";
-
-    [ObservableProperty]
-    [CustomValidation(typeof(TiepNhanMonAnViewModel), nameof(ValidateDonGia))]
-    private string _donGia = "";
+    protected override string EntityLabel => "món ăn";
 
     [ObservableProperty]
     [Required(ErrorMessage = "Vui lòng chọn loại món ăn.")]
     private string _selectedMaLoaiMonAn = "";
-
-    [ObservableProperty]
-    [Required(ErrorMessage = "Vui lòng chọn đơn vị tính.")]
-    private string _selectedMaDonViTinh = "";
-
-    [ObservableProperty]
-    [Required(ErrorMessage = "Vui lòng chọn tình trạng.")]
-    private string _selectedMaTinhTrang = "";
 
     [ObservableProperty]
     private List<LoaiMonAn> _loaiMonAns = [];
@@ -52,6 +36,15 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
     [ObservableProperty]
     private List<TinhTrang> _tinhTrangs = [];
 
+    [ObservableProperty]
+    private ObservableCollection<TiepNhanMonAnItemViewModel> _dishes = [];
+
+    [ObservableProperty]
+    private ObservableCollection<TiepNhanMonAnItemViewModel> _pagedItems = [];
+
+    [ObservableProperty]
+    private TiepNhanMonAnItemViewModel? _selectedMonAn;
+
     private List<(string MaLoaiMonAn, string MaDonViTinh)> _allLoaiMonAnDvt = [];
 
     public TiepNhanMonAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
@@ -64,8 +57,9 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
 
     private void ClearFields()
     {
-        TenMonAn = "";
-        DonGia = "";
+        SelectedMaLoaiMonAn = "";
+        Dishes.Clear();
+        PagedItems.Clear();
     }
 
     public async Task InitializeFormAsync()
@@ -87,28 +81,8 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
         if (LoaiMonAns.Count > 0)
             SelectedMaLoaiMonAn = LoaiMonAns[0].MaLoaiMonAn;
 
-        if (TinhTrangs.Count > 0)
-            SelectedMaTinhTrang = TinhTrangs[0].MaTinhTrang;
-
         UpdateAllowedDonViTinhs(SelectedMaLoaiMonAn);
-        await GenerateNextMaMonAnAsync();
-    }
-
-    private async Task GenerateNextMaMonAnAsync()
-    {
-        async Task<int> GetMaxIdAsync()
-        {
-            using var context = await _dbContextFactory.CreateDbContextAsync();
-
-            int? maxId = await context.MonAn
-                .Select(m => (int?)m.MaMonAn)
-                .MaxAsync();
-
-            return maxId ?? 0;
-        }
-
-        int maxId = await GetMaxIdAsync();
-        MaMonAn = maxId + 1;
+        OnPageChanged();
     }
 
     private void UpdateAllowedDonViTinhs(string? maLoaiMonAn)
@@ -126,9 +100,15 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
 
         AllowedDonViTinhs = DonViTinhs.Where(d => allowedDvtIds.Contains(d.MaDonViTinh)).ToList();
 
-        if (!AllowedDonViTinhs.Any(d => d.MaDonViTinh == SelectedMaDonViTinh))
+        if (Dishes != null)
         {
-            SelectedMaDonViTinh = AllowedDonViTinhs.FirstOrDefault()?.MaDonViTinh ?? "";
+            foreach (var row in Dishes)
+            {
+                if (!AllowedDonViTinhs.Any(d => d.MaDonViTinh == row.SelectedMaDonViTinh))
+                {
+                    row.SelectedMaDonViTinh = AllowedDonViTinhs.FirstOrDefault()?.MaDonViTinh ?? "";
+                }
+            }
         }
     }
 
@@ -137,19 +117,67 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
         UpdateAllowedDonViTinhs(value);
     }
 
+    protected override void OnPageChanged()
+    {
+        TotalItems = Dishes.Count;
+        UpdatePaginationInfo();
+
+        PagedItems.Clear();
+        var pageElements = Dishes.GetPage(PageNumber, PageSize);
+        foreach (var item in pageElements)
+        {
+            PagedItems.Add(item);
+        }
+    }
+
+    [RelayCommand]
+    private void AddRow()
+    {
+        var defaultDvt = AllowedDonViTinhs.FirstOrDefault()?.MaDonViTinh ?? "";
+        var defaultTinhTrang = TinhTrangs.FirstOrDefault()?.MaTinhTrang ?? "DangBan";
+
+        var rowVm = new TiepNhanMonAnItemViewModel
+        {
+            STT = Dishes.Count + 1,
+            TenMonAn = "",
+            SelectedMaDonViTinh = defaultDvt,
+            SelectedMaTinhTrang = defaultTinhTrang,
+            DonGia = ""
+        };
+        Dishes.Add(rowVm);
+
+        int targetPage = (int)Math.Ceiling((double)Dishes.Count / PageSize);
+        if (PageNumber != targetPage)
+        {
+            PageNumber = targetPage;
+        }
+        else
+        {
+            OnPageChanged();
+        }
+    }
+
+    [RelayCommand]
+    private void DeleteRow(TiepNhanMonAnItemViewModel? row)
+    {
+        if (row != null)
+        {
+            Dishes.Remove(row);
+
+            int stt = 1;
+            foreach (var item in Dishes)
+            {
+                item.STT = stt++;
+            }
+
+            OnPageChanged();
+        }
+    }
+
     [RelayCommand]
     private async Task ResetAsync()
     {
         await InitializeFormAsync();
-    }
-
-    public static ValidationResult? ValidateDonGia(string value, ValidationContext context)
-    {
-        if (string.IsNullOrWhiteSpace(value) || !long.TryParse(value, out long donGia) || donGia < 0)
-        {
-            return new ValidationResult("Đơn giá phải là số nguyên hợp lệ và lớn hơn hoặc bằng 0.");
-        }
-        return ValidationResult.Success;
     }
 
     [RelayCommand]
@@ -164,28 +192,51 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
             return;
         }
 
-        long donGia = long.Parse(DonGia);
+        if (Dishes.Count == 0)
+        {
+            MessageBox.Show("Vui lòng thêm ít nhất một món ăn.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        foreach (var row in Dishes)
+        {
+            row.ValidateRow();
+            if (row.HasErrors)
+            {
+                MessageBox.Show("Vui lòng sửa các lỗi nhập liệu trong danh sách món ăn.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+        }
 
         const int maxRetries = 3;
         for (int attempt = 0; attempt < maxRetries; attempt++)
         {
             try
             {
-                var newMonAn = new MonAn
-                {
-                    MaMonAn = MaMonAn,
-                    TenMonAn = TenMonAn,
-                    DonGia = donGia,
-                    MaLoaiMonAn = SelectedMaLoaiMonAn,
-                    MaDonViTinh = SelectedMaDonViTinh,
-                    MaTinhTrang = SelectedMaTinhTrang
-                };
+                using var context = await _dbContextFactory.CreateDbContextAsync();
 
-                using (var context = await _dbContextFactory.CreateDbContextAsync())
+                int? maxId = await context.MonAn
+                    .Select(m => (int?)m.MaMonAn)
+                    .MaxAsync();
+                
+                int nextId = (maxId ?? 0) + 1;
+
+                foreach (var row in Dishes)
                 {
+                    var newMonAn = new MonAn
+                    {
+                        MaMonAn = nextId++,
+                        TenMonAn = row.TenMonAn,
+                        DonGia = long.Parse(row.DonGia),
+                        MaLoaiMonAn = SelectedMaLoaiMonAn,
+                        MaDonViTinh = row.SelectedMaDonViTinh,
+                        MaTinhTrang = row.SelectedMaTinhTrang
+                    };
                     await context.MonAn.AddAsync(newMonAn);
-                    await context.SaveChangesAsync();
                 }
+
+                await context.SaveChangesAsync();
+
                 MessageBox.Show("Thêm món ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 if (window != null)
                 {
@@ -196,7 +247,7 @@ public partial class TiepNhanMonAnViewModel : ObservableValidator
             }
             catch (DbUpdateException ex) when (ex.IsPrimaryKeyViolation() && attempt < maxRetries - 1)
             {
-                await GenerateNextMaMonAnAsync();
+                // Query again in the next retry attempt
             }
             catch (Exception ex)
             {
