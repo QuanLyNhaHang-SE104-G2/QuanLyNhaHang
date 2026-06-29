@@ -37,5 +37,11 @@ public class PhieuGoiMon
     [ForeignKey(nameof(MaBan))]
     public virtual Ban Ban { get; set; } = null!;
 
+    [Column("MaHoaDon")]
+    public int? MaHoaDon { get; set; }
+
+    [ForeignKey(nameof(MaHoaDon))]
+    public virtual HoaDon? HoaDon { get; set; }
+
     public virtual ICollection<CTGoiMon> CTGoiMons { get; set; } = new List<CTGoiMon>();
 }

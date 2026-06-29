@@ -24,6 +24,7 @@ public class AppDbContext: DbContext
     public DbSet<NhanVien> NhanVien { get; set; } = null!;
     public DbSet<PhieuGoiMon> PhieuGoiMon { get; set; } = null!;
     public DbSet<CTGoiMon> CTGoiMon { get; set; } = null!;
+    public DbSet<HoaDon> HoaDon { get; set; } = null!;
 
     public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
     {
