@@ -47,7 +47,7 @@ public class AppDbContext: DbContext
         );
 
         modelBuilder.Entity<ThamSo>().HasData(
-            new ThamSo { Id = 1, SoChoNgoiToiThieu = 2 }
+            new ThamSo { Id = 1, SoChoNgoiToiThieu = 2, TrangThaiThanhToan = "DangCheBien,DaPhucVu" }
         );
 
         modelBuilder.Entity<LoaiMonAn>().HasData(

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuanLyNhaHang.Models;
@@ -12,4 +12,7 @@ public class ThamSo
 
     [Column("SoChoNgoiToiThieu")]
     public int SoChoNgoiToiThieu { get; set; }
+
+    [Column("TrangThaiThanhToan")]
+    public string TrangThaiThanhToan { get; set; } = "DangCheBien,DaPhucVu";
 }
