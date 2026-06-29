@@ -122,4 +122,29 @@ public class AppDbContext: DbContext
                 .UseSqlite(connString);
         }
     }
+
+    /// <summary>
+    /// Gets the minimum seats per table constraint (SoChoNgoiToiThieu) from THAMSO, defaulting to 2 if missing.
+    /// </summary>
+    public async Task<int> GetSoChoNgoiToiThieuAsync()
+    {
+        var thamSo = await ThamSo.AsNoTracking().FirstOrDefaultAsync();
+        return thamSo?.SoChoNgoiToiThieu ?? 2;
+    }
+
+    /// <summary>
+    /// Gets the list of allowed status codes for checkout (TrangThaiThanhToan) from THAMSO, defaulting to DangCheBien, DaPhucVu if missing.
+    /// </summary>
+    public async Task<List<string>> GetTrangThaiThanhToanAsync()
+    {
+        var thamSo = await ThamSo.AsNoTracking().FirstOrDefaultAsync();
+        var val = thamSo?.TrangThaiThanhToan;
+        if (string.IsNullOrWhiteSpace(val))
+        {
+            return ["DangCheBien", "DaPhucVu"];
+        }
+        return val
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+    }
 }
