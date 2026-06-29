@@ -3,6 +3,8 @@
 - Decouple Services, Views and ViewModels completely
 - Make popup windows proper "dialogs".
 - Migrate ViewModel DTOs into View-formatted displays and proper DTOs
+    - Make proper to and from DTO methods for DTO-Model conversion.
+- Systematically extract and make frequent or complex queries part of IQueryable extension family
 
 ## Concurrency / Background Thread Safety
 
