@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Threading;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,13 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
 
     [ObservableProperty]
     private ObservableCollection<BanItemViewModel> _bans = [];
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DeleteBanCommand))]
+    [NotifyCanExecuteChangedFor(nameof(EditBanCommand))]
+    private BanItemViewModel? _selectedBan;
+
+    private bool CanDeleteOrEdit => SelectedBan != null;
 
     public SoDoBanViewModel(IDbContextFactory<AppDbContext> dbContextFactory, IDialogService dialogService)
     {
@@ -85,5 +93,53 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
     private void SearchTable(System.Windows.Window? owner)
     {
         _dialogService.ShowTraCuuBanAnDialog(owner);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDeleteOrEdit))]
+    private async Task DeleteBanAsync()
+    {
+        if (SelectedBan == null) return;
+
+        var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa bàn ăn '{SelectedBan.TenBan}' không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (result != MessageBoxResult.Yes) return;
+
+        try
+        {
+            using (var context = await _dbContextFactory.CreateDbContextAsync())
+            {
+                bool hasOrders = await context.PhieuGoiMon.AnyAsync(p => p.MaBan == SelectedBan.MaBan);
+                if (hasOrders)
+                {
+                    MessageBox.Show($"Không thể xóa bàn ăn '{SelectedBan.TenBan}' vì bàn đã có thông tin gọi món.", "Lỗi xóa bàn ăn", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var ban = await context.Ban.FirstOrDefaultAsync(b => b.MaBan == SelectedBan.MaBan);
+                if (ban != null)
+                {
+                    context.Ban.Remove(ban);
+                    await context.SaveChangesAsync();
+                }
+            }
+
+            MessageBox.Show("Xóa bàn ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            SelectedBan = null;
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi xóa cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDeleteOrEdit))]
+    private async Task EditBanAsync(System.Windows.Window? owner)
+    {
+        if (SelectedBan == null) return;
+
+        if (_dialogService.ShowCapNhatBanAnDialog(owner, SelectedBan.MaBan) == true)
+        {
+            await LoadDataAsync();
+        }
     }
 }

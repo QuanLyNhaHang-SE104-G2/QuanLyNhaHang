@@ -21,15 +21,25 @@
                         <TextBlock Text="Thêm bàn" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button Content="Xóa" Style="{StaticResource ButtonDanger}" Margin="0,0,10,0"/>
-                <Button Content="Sửa" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"/>
+                <Button Style="{StaticResource ButtonDanger}" Command="{Binding DeleteBanCommand}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Trash" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Xóa" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource ButtonSecondary}" Command="{Binding EditBanCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Edit" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Sửa" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
                 <Button Content="Tra cứu" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"
                         Command="{Binding SearchTableCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
             </StackPanel>
         </controls:PaginatedView.ButtonContent>
 
         <controls:PaginatedView.MainContent>
-            <DataGrid ItemsSource="{Binding Bans}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
+            <DataGrid ItemsSource="{Binding Bans}" SelectedItem="{Binding SelectedBan}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
                       ScrollViewer.CanContentScroll="True"
                       ScrollViewer.VerticalScrollBarVisibility="Visible"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto">

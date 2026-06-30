@@ -38,6 +38,7 @@ public partial class App : Application
         // Sprint 1, 3: Ban, Tra cuu ban
         services.AddTransient<SoDoBanViewModel>();
         services.AddTransient<TiepNhanBanAnViewModel>();
+        services.AddTransient<CapNhatBanAnViewModel>();
         // Sprint 2: Mon an
         services.AddTransient<MonAnViewModel>();
         services.AddTransient<TiepNhanMonAnViewModel>();

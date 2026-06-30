@@ -57,6 +57,29 @@ public class DialogService : IDialogService
     public bool? ShowTiepNhanBanAnDialog(Window? owner)
         => ShowDialog<TiepNhanBanAnWindow, TiepNhanBanAnViewModel>(owner);
 
+    public bool? ShowCapNhatBanAnDialog(Window? owner, int maBan)
+    {
+        var dialog = new CapNhatBanAnWindow
+        {
+            Owner = owner ?? Application.Current.MainWindow
+        };
+        var viewModel = App.Current.Services.GetRequiredService<CapNhatBanAnViewModel>();
+        viewModel.MaBan = maBan;
+        dialog.DataContext = viewModel;
+
+        try
+        {
+            return dialog.ShowDialog();
+        }
+        finally
+        {
+            if (viewModel is IDisposable disposableVM)
+            {
+                disposableVM.Dispose();
+            }
+        }
+    }
+
     public bool? ShowTiepNhanMonAnDialog(Window? owner)
         => ShowDialog<TiepNhanMonAnWindow, TiepNhanMonAnViewModel>(owner);
 
