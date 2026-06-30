@@ -12,6 +12,7 @@ public partial class MainViewModel : ObservableObject
     private readonly HoaDonViewModel _hoaDonViewModel;
     private readonly BaoCaoViewModel _baoCaoViewModel;
     private readonly QuyDinhViewModel _quyDinhViewModel;
+    private readonly NhanVienViewModel _nhanVienViewModel;
 
     [ObservableProperty]
     private object? _currentViewModel;
@@ -34,13 +35,17 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isQuyDinhActive;
 
+    [ObservableProperty]
+    private bool _isNhanVienActive;
+
     public MainViewModel(
         SoDoBanViewModel soDoBanViewModel, 
         OrderViewModel orderViewModel, 
         MonAnViewModel monAnViewModel,
         HoaDonViewModel hoaDonViewModel,
         BaoCaoViewModel baoCaoViewModel,
-        QuyDinhViewModel quyDinhViewModel)
+        QuyDinhViewModel quyDinhViewModel,
+        NhanVienViewModel nhanVienViewModel)
     {
         _soDoBanViewModel = soDoBanViewModel;
         _orderViewModel = orderViewModel;
@@ -48,6 +53,7 @@ public partial class MainViewModel : ObservableObject
         _hoaDonViewModel = hoaDonViewModel;
         _baoCaoViewModel = baoCaoViewModel;
         _quyDinhViewModel = quyDinhViewModel;
+        _nhanVienViewModel = nhanVienViewModel;
         CurrentViewModel = _soDoBanViewModel;
     }
 
@@ -61,6 +67,7 @@ public partial class MainViewModel : ObservableObject
         IsBaoCaoActive = false;
         IsHoaDonActive = false;
         IsQuyDinhActive = false;
+        IsNhanVienActive = false;
         _soDoBanViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
@@ -74,6 +81,7 @@ public partial class MainViewModel : ObservableObject
         IsBaoCaoActive = false;
         IsHoaDonActive = false;
         IsQuyDinhActive = false;
+        IsNhanVienActive = false;
         _orderViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
@@ -87,6 +95,7 @@ public partial class MainViewModel : ObservableObject
         IsBaoCaoActive = false;
         IsHoaDonActive = false;
         IsQuyDinhActive = false;
+        IsNhanVienActive = false;
         _monAnViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
@@ -100,6 +109,7 @@ public partial class MainViewModel : ObservableObject
         IsBaoCaoActive = true;
         IsHoaDonActive = false;
         IsQuyDinhActive = false;
+        IsNhanVienActive = false;
         _baoCaoViewModel.LoadAllData();
     }
 
@@ -113,6 +123,7 @@ public partial class MainViewModel : ObservableObject
         IsBaoCaoActive = false;
         IsHoaDonActive = true;
         IsQuyDinhActive = false;
+        IsNhanVienActive = false;
         _hoaDonViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
@@ -126,6 +137,21 @@ public partial class MainViewModel : ObservableObject
         IsBaoCaoActive = false;
         IsHoaDonActive = false;
         IsQuyDinhActive = true;
+        IsNhanVienActive = false;
         _quyDinhViewModel.LoadAllData();
+    }
+
+    [RelayCommand]
+    private void NavigateToNhanVien()
+    {
+        CurrentViewModel = _nhanVienViewModel;
+        IsSoDoBanActive = false;
+        IsThucDonActive = false;
+        IsPosActive = false;
+        IsBaoCaoActive = false;
+        IsHoaDonActive = false;
+        IsQuyDinhActive = false;
+        IsNhanVienActive = true;
+        _nhanVienViewModel.LoadDataAsync().SafeFireAndForget();
     }
 }

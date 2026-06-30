@@ -50,6 +50,10 @@ public partial class App : Application
         services.AddTransient<TiepNhanPhieuGoiMonViewModel>();
         services.AddTransient<CapNhatPhieuGoiMonViewModel>();
         services.AddTransient<TraCuuPhieuGoiMonViewModel>();
+        // Nhan vien
+        services.AddTransient<NhanVienViewModel>();
+        services.AddTransient<TiepNhanNhanVienViewModel>();
+        services.AddTransient<CapNhatNhanVienViewModel>();
         // Sprint 6: Bao cao doanh thu
         services.AddTransient<BaoCaoDoanhThuTheoNgayViewModel>();
         services.AddTransient<BaoCaoDoanhThuTheoMonAnViewModel>();

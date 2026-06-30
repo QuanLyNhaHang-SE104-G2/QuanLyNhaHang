@@ -138,6 +138,32 @@ public class DialogService : IDialogService
         }
     }
 
+    public bool? ShowTiepNhanNhanVienDialog(Window? owner)
+        => ShowDialog<TiepNhanNhanVienWindow, TiepNhanNhanVienViewModel>(owner);
+
+    public bool? ShowCapNhatNhanVienDialog(Window? owner, int maNhanVien)
+    {
+        var dialog = new CapNhatNhanVienWindow
+        {
+            Owner = owner ?? Application.Current.MainWindow
+        };
+        var viewModel = App.Current.Services.GetRequiredService<CapNhatNhanVienViewModel>();
+        viewModel.MaNhanVien = maNhanVien;
+        dialog.DataContext = viewModel;
+
+        try
+        {
+            return dialog.ShowDialog();
+        }
+        finally
+        {
+            if (viewModel is IDisposable disposableVM)
+            {
+                disposableVM.Dispose();
+            }
+        }
+    }
+
     public void ShowTraCuuPhieuGoiMonDialog(Window? owner)
         => ShowDialogNoResult<TraCuuPhieuGoiMonWindow, TraCuuPhieuGoiMonViewModel>(owner);
 

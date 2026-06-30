@@ -32,6 +32,9 @@
             <DataTemplate DataType="{x:Type vm:QuyDinhViewModel}">
                 <views:QuyDinhView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NhanVienViewModel}">
+                <views:NhanVienView />
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

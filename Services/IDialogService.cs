@@ -12,6 +12,8 @@ public interface IDialogService
     void ShowTraCuuMonAnDialog(Window? owner);
     bool? ShowTiepNhanPhieuGoiMonDialog(Window? owner);
     bool? ShowCapNhatPhieuGoiMonDialog(Window? owner, int maPhieuGoiMon);
+    bool? ShowTiepNhanNhanVienDialog(Window? owner);
+    bool? ShowCapNhatNhanVienDialog(Window? owner, int maNhanVien);
     void ShowTraCuuPhieuGoiMonDialog(Window? owner);
     bool? ShowTiepNhanHoaDonDialog(Window? owner);
     void ShowTraCuuHoaDonDialog(Window? owner);
