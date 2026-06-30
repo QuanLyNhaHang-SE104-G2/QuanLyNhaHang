@@ -57,26 +57,24 @@ public partial class BaoCaoDoanhThuTheoMonAnViewModel : PaginatedViewModelBase
 
         PageSize = 10;
 
-        InitializeAsync().SafeFireAndForget();
-    }
-
-    private async Task InitializeAsync()
-    {
-        using (var context = await _dbContextFactory.CreateDbContextAsync())
-        {
-            Categories = await context.LoaiMonAn.AsNoTracking().ToListAsync();
-        }
-
-        if (Categories.Count > 0)
-        {
-            SelectedMaLoaiMonAn = Categories[0].MaLoaiMonAn;
-        }
-
-        await LoadDataAsync();
+        LoadDataAsync().SafeFireAndForget();
     }
 
     protected override async Task OnLoadDataAsync(CancellationToken cancellationToken)
     {
+        if (Categories == null || Categories.Count == 0)
+        {
+            using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
+            {
+                var cats = await context.LoaiMonAn.AsNoTracking().ToListAsync(cancellationToken);
+                Categories = cats;
+            }
+            if (Categories.Count > 0 && string.IsNullOrEmpty(SelectedMaLoaiMonAn))
+            {
+                SelectedMaLoaiMonAn = Categories[0].MaLoaiMonAn;
+            }
+        }
+
         if (string.IsNullOrEmpty(SelectedMaLoaiMonAn) ||
             !int.TryParse(NamBaoCao, out int year) || year <= 0 ||
             !int.TryParse(ThangBaoCao, out int month) || month < 1 || month > 12)
@@ -114,8 +112,7 @@ public partial class BaoCaoDoanhThuTheoMonAnViewModel : PaginatedViewModelBase
             int total = await groupedQuery.CountAsync(cancellationToken);
             var items = await groupedQuery
                 .OrderByDescending(x => x.DoanhThu)
-                .Skip((PageNumber - 1) * PageSize)
-                .Take(PageSize)
+                .GetPage(PageNumber, PageSize)
                 .ToListAsync(cancellationToken);
 
             return (items, total, totalCategoryRevenue);

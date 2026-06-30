@@ -93,8 +93,7 @@ public partial class BaoCaoDoanhThuTheoNgayViewModel : PaginatedViewModelBase
         UpdatePaginationInfo();
 
         var sliced = dailyTotals
-            .Skip((PageNumber - 1) * PageSize)
-            .Take(PageSize)
+            .GetPage(PageNumber, PageSize)
             .ToList();
 
         int stt = (PageNumber - 1) * PageSize + 1;
