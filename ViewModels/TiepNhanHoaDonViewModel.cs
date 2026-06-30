@@ -233,6 +233,32 @@ public partial class TiepNhanHoaDonViewModel : InMemoryPaginatedViewModelBase
             return;
         }
 
+        // Bước 4: Kiểm tra "tổng tiền và thành tiền của từng món ăn" (D1) có lớn hơn 0 hay không? Nếu không thì tới bước 11.
+        if (_tongTienVal <= 0)
+        {
+            MessageBox.Show("Tổng tiền hóa đơn phải lớn hơn 0.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Bước 11: Kết thúc.
+            return;
+        }
+        foreach (var detail in InvoiceDetails)
+        {
+            if (detail.ThanhTien <= 0)
+            {
+                MessageBox.Show($"Thành tiền của món '{detail.TenMonAn}' phải lớn hơn 0.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Bước 11: Kết thúc.
+                return;
+            }
+        }
+
+        // Bước 5: Kiểm tra "tổng tiền" (D1) có bằng tổng tất cả "thành tiền" (D1) của các món ăn có trong hóa đơn cộng lại hay không? Nếu không thì tới bước 11.
+        long sumThanhTien = InvoiceDetails.Sum(d => d.ThanhTien);
+        if (_tongTienVal != sumThanhTien + _phuThuVal)
+        {
+            MessageBox.Show("Tổng tiền không khớp với tổng thành tiền các món ăn và phụ thu.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Bước 11: Kết thúc.
+            return;
+        }
+
         const int maxRetries = 3;
         for (int attempt = 0; attempt < maxRetries; attempt++)
         {
