@@ -21,8 +21,18 @@
                     <TextBlock Text="Thêm món ăn" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
-                <Button Content="Xóa" Style="{StaticResource ButtonDanger}" Margin="0,0,10,0"/>
-                <Button Content="Sửa" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"/>
+                <Button Style="{StaticResource ButtonDanger}" Command="{Binding DeleteMonAnCommand}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Trash" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Xóa" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource ButtonSecondary}" Command="{Binding EditMonAnCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="Edit" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Sửa" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
                 <Button Content="Tra cứu" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"/>
             </StackPanel>
         </controls:PaginatedView.ButtonContent>

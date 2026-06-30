@@ -42,6 +42,7 @@ public partial class App : Application
         // Sprint 2: Mon an
         services.AddTransient<MonAnViewModel>();
         services.AddTransient<TiepNhanMonAnViewModel>();
+        services.AddTransient<CapNhatMonAnViewModel>();
         services.AddTransient<TraCuuBanAnViewModel>();
         // Sprint 4: Phieu goi mon
         services.AddTransient<OrderViewModel>();
