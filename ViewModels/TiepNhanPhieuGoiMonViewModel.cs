@@ -13,6 +13,9 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
+// Bước 1: Nhận D1 (D1: Mã Bàn, Mã Nhân viên, Thời gian gọi,
+// Danh sách các món ăn (mỗi món gồm Tên món ăn, Số lượng,
+// Mã Đơn vị tính, Đơn giá, Ghi chú)), Trạng thái, Tổng tiền tạm tính
 public partial class TiepNhanPhieuGoiMonViewModel : InMemoryPaginatedViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
@@ -87,15 +90,21 @@ public partial class TiepNhanPhieuGoiMonViewModel : InMemoryPaginatedViewModelBa
 
         using (var context = await _dbContextFactory.CreateDbContextAsync())
         {
+            // Bước 2: Đọc D2 (D2: Danh sách Bàn ăn) từ CSDL Bàn
             Bans = await context.Ban.AsNoTracking().OrderBy(b => b.TenBan).ToListAsync();
+            // Bước 3: Đọc D3 (D3: Danh sách Nhân viên) từ CSDL Nhân viên
             NhanViens = await context.NhanVien.AsNoTracking().OrderBy(n => n.TenNhanVien).ToListAsync();
-            TrangThais = await context.TrangThai.AsNoTracking().OrderBy(t => t.TenTrangThai).ToListAsync();
+            // Bước 4: Đọc D4 (D2: Danh sách Món ăn) từ CSDL Món ăn
+            // Bước 5: Đọc D5 (D5: Danh sách Đơn vị tính) từ CSDL Đơn vị tính
+            // Bước 6: Kiểm tra từng món ăn trong danh sách có thuộc tình trạng Đang bán hay không?
             ActiveMonAns = await context.MonAn
                 .Include(m => m.DonViTinh)
                 .AsNoTracking()
                 .Where(m => m.MaTinhTrang == "DangBan")
                 .OrderBy(m => m.TenMonAn)
                 .ToListAsync();
+            // Bước 7: Đọc D6 (D6: Danh sách Trạng thái) từ CSDL Trạng thái
+            TrangThais = await context.TrangThai.AsNoTracking().OrderBy(t => t.TenTrangThai).ToListAsync();
         }
 
         if (NhanViens.Count > 0) SelectedMaNhanVien = NhanViens[0].MaNhanVien;
