@@ -14,7 +14,7 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public partial class TiepNhanMonAnViewModel : ControlTableViewModelBase
+public partial class TiepNhanMonAnViewModel : InMemoryPaginatedViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
@@ -122,12 +122,8 @@ public partial class TiepNhanMonAnViewModel : ControlTableViewModelBase
         TotalItems = Dishes.Count;
         UpdatePaginationInfo();
 
-        PagedItems.Clear();
-        var pageElements = Dishes.GetPage(PageNumber, PageSize);
-        foreach (var item in pageElements)
-        {
-            PagedItems.Add(item);
-        }
+        var pageElements = Dishes.GetPage(PageNumber, PageSize).ToList();
+        PagedItems = new ObservableCollection<TiepNhanMonAnItemViewModel>(pageElements);
     }
 
     [RelayCommand]
@@ -247,7 +243,6 @@ public partial class TiepNhanMonAnViewModel : ControlTableViewModelBase
             }
             catch (DbUpdateException ex) when (ex.IsPrimaryKeyViolation() && attempt < maxRetries - 1)
             {
-                // Query again in the next retry attempt
             }
             catch (Exception ex)
             {

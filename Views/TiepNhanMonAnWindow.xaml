@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
             <!-- Ticket Info Header Form -->
             <RowDefinition Height="Auto"/>
-            <!-- Detail Grid Table (ControlTable) -->
+            <!-- Detail Grid Table (InMemoryPaginatedView) -->
             <RowDefinition Height="*"/>
             <!-- Footer Buttons -->
             <RowDefinition Height="Auto"/>
@@ -42,8 +42,8 @@
             </Grid>
         </Border>
 
-        <!-- Detail Grid Table (ControlTable) -->
-        <controls:ControlTable Grid.Row="2" Margin="0,0,0,15"
+        <!-- Detail Grid Table (InMemoryPaginatedView) -->
+        <controls:InMemoryPaginatedView Grid.Row="2" Margin="0,0,0,15"
                                VerticalAlignment="Stretch"
                                AddRowButtonText="Thêm món"
                                ItemsSource="{Binding PagedItems}"
@@ -133,7 +133,7 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-        </controls:ControlTable>
+        </controls:InMemoryPaginatedView>
 
         <!-- Footer Buttons -->
         <Grid Grid.Row="3">

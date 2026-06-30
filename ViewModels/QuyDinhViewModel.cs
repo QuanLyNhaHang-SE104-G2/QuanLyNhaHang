@@ -5,24 +5,28 @@ namespace QuanLyNhaHang.ViewModels;
 
 public partial class QuyDinhViewModel : ObservableObject
 {
-    public QuyDinh1ViewModel QuyDinh1 { get; }
-    public QuyDinh3ViewModel QuyDinh3 { get; }
-    public QuyDinh5ViewModel QuyDinh5 { get; }
+    public QuyDinhBanAnViewModel QuyDinhBanAn { get; }
+    public QuyDinhLoaiMonAnViewModel QuyDinhLoaiMonAn { get; }
+    public QuyDinhDonViTinhViewModel QuyDinhDonViTinh { get; }
+    public QuyDinhTrangThaiThanhToanViewModel QuyDinhTrangThaiThanhToan { get; }
 
     public QuyDinhViewModel(
-        QuyDinh1ViewModel quyDinh1,
-        QuyDinh3ViewModel quyDinh3,
-        QuyDinh5ViewModel quyDinh5)
+        QuyDinhBanAnViewModel quyDinhBanAn,
+        QuyDinhLoaiMonAnViewModel quyDinhLoaiMonAn,
+        QuyDinhDonViTinhViewModel quyDinhDonViTinh,
+        QuyDinhTrangThaiThanhToanViewModel quyDinhTrangThaiThanhToan)
     {
-        QuyDinh1 = quyDinh1;
-        QuyDinh3 = quyDinh3;
-        QuyDinh5 = quyDinh5;
+        QuyDinhBanAn = quyDinhBanAn;
+        QuyDinhLoaiMonAn = quyDinhLoaiMonAn;
+        QuyDinhDonViTinh = quyDinhDonViTinh;
+        QuyDinhTrangThaiThanhToan = quyDinhTrangThaiThanhToan;
     }
 
     public void LoadAllData()
     {
-        QuyDinh1.LoadDataAsync().SafeFireAndForget();
-        QuyDinh3.LoadDataAsync().SafeFireAndForget();
-        QuyDinh5.LoadDataAsync().SafeFireAndForget();
+        QuyDinhBanAn.InitializeFormAsync().SafeFireAndForget();
+        QuyDinhLoaiMonAn.InitializeFormAsync().SafeFireAndForget();
+        QuyDinhDonViTinh.InitializeFormAsync().SafeFireAndForget();
+        QuyDinhTrangThaiThanhToan.InitializeFormAsync().SafeFireAndForget();
     }
 }

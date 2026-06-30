@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +13,7 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public partial class TiepNhanHoaDonViewModel : ControlTableViewModelBase
+public partial class TiepNhanHoaDonViewModel : InMemoryPaginatedViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
@@ -36,7 +35,7 @@ public partial class TiepNhanHoaDonViewModel : ControlTableViewModelBase
     private List<Ban> _bans = [];
 
     [ObservableProperty]
-    private DateTime _thoiGianThanhToan = DateTime.Now;
+    private System.DateTime _thoiGianThanhToan = System.DateTime.Now;
 
     [ObservableProperty]
     private string _phuThuText = "0 VND";
@@ -65,7 +64,7 @@ public partial class TiepNhanHoaDonViewModel : ControlTableViewModelBase
     {
         MaHoaDon = 0;
         SelectedMaBan = null;
-        ThoiGianThanhToan = DateTime.Now;
+        ThoiGianThanhToan = System.DateTime.Now;
         PhuThuText = "0 VND";
         TongTienText = "0 VND";
         _phuThuVal = 0;
@@ -231,14 +230,13 @@ public partial class TiepNhanHoaDonViewModel : ControlTableViewModelBase
                 var newHoaDon = new HoaDon
                 {
                     MaHoaDon = MaHoaDon,
-                    ThoiGianThanhToan = DateTime.Now,
+                    ThoiGianThanhToan = System.DateTime.Now,
                     PhuThu = _phuThuVal,
                     TongTien = _tongTienVal
                 };
 
                 var allowedStates = await GetAllowedTrangThaisForPaymentAsync(context);
 
-                // Retrieve all eligible order tickets for the table
                 var orders = await context.PhieuGoiMon
                     .Where(p => p.MaBan == SelectedMaBan!.Value && p.MaHoaDon == null && allowedStates.Contains(p.MaTrangThai))
                     .ToListAsync();
@@ -263,7 +261,7 @@ public partial class TiepNhanHoaDonViewModel : ControlTableViewModelBase
             {
                 await GenerateNextMaHoaDonAsync();
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 MessageBox.Show($"Lỗi lưu cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;

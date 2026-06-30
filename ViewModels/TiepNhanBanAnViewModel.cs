@@ -12,6 +12,8 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
+// B1: Nhận D1 (Tên bàn, Khu vực, Số chỗ ngồi, Loại bàn, Phụ thu)
+// Người dùng nhập các trường này vào trong form popup này
 public partial class TiepNhanBanAnViewModel : ObservableValidator
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
@@ -67,8 +69,10 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
 
         using (var context = await _dbContextFactory.CreateDbContextAsync())
         {
-            SoChoNgoiToiThieu = await context.GetSoChoNgoiToiThieuAsync();
+            // B2: Đọc D2 (Danh sách các Loại bàn)
             LoaiBans = await context.LoaiBan.AsNoTracking().OrderBy(l => l.PhuThu).ToListAsync();
+            // B3: Đọc D3 (Quy định số chỗ ngồi tối thiểu)
+            SoChoNgoiToiThieu = await context.GetSoChoNgoiToiThieuAsync();
         }
 
         if (LoaiBans.Count > 0)
@@ -143,12 +147,23 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
     [RelayCommand]
     private async Task AcceptAsync(Window? window)
     {
+        // B4: Kiểm tra Loại bàn có thuộc Danh sách các Loại bàn hay không
+        // Bước này đã đúng do Loại bàn được tải từ CSDL, và người dùng chỉ được chọn
+        // một trong các loại bàn hợp lệ.
+
+        // B5: Đây là phương thức của ObservableValidator. Vì property SoChoNgoi đã được đăng
+        // ký với phương thức Validator là ValidateSoChoNgoi, ObservableValidator
+        // sẽ tự động gọi thực hiện phương thức ValidateSoChoNgoi, trong đó có điều
+        // kiện về quy định số chỗ ngồi tối thiểu.
         ValidateAllProperties();
 
+        // B6: Nếu không thỏa mãn tất cả điều kiện kiểm tra, hàm ValidateAllProperties
+        // sẽ đặt giá trị true cho HasErrors
         if (HasErrors)
         {
             var errors = GetErrors().Select(e => e.ErrorMessage).ToList();
             MessageBox.Show(string.Join("\n", errors), "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+            // B8: Kết thúc
             return;
         }
 
@@ -157,6 +172,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
         const int maxRetries = 3;
         for (int attempt = 0; attempt < maxRetries; attempt++)
         {
+            // B7: Lưu D4 === D1 xuống CSDL
             try
             {
                 var newBan = new Ban
@@ -180,6 +196,7 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
                     window.DialogResult = true;
                     window.Close();
                 }
+                // B8: Kết thúc
                 return;
             }
             catch (DbUpdateException ex) when (ex.IsPrimaryKeyViolation() && attempt < maxRetries - 1)
@@ -195,7 +212,6 @@ public partial class TiepNhanBanAnViewModel : ObservableValidator
             }
         }
 
-        // Exhausted retries
         MessageBox.Show("Không thể lưu bàn ăn do xung đột mã liên tục. Vui lòng thử lại.", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 

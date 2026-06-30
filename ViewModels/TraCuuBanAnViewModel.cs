@@ -14,6 +14,8 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
+// B1: Nhận D1 từ người dùng (D1: ít nhất một trong các thông tin sau:
+// Mã Bàn, Tên Bàn, Khu vực, Số chỗ ngồi, Mã Loại bàn, Tên Loại bàn, Phụ thu).
 public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
@@ -120,6 +122,9 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
 
         using (var context = await _dbContextFactory.CreateDbContextAsync(cancellationToken))
         {
+            // B2: Đọc D2 (D2: Danh sách các bàn ăn thỏa mãn tiêu chuẩn tra cứu cùng với thông
+            // tin chi tiết liên quan: Mã Bàn, Tên Bàn, Khu vực, Số chỗ ngồi, Mã Loại bàn,
+            // Tên Loại bàn) từ CSDL Bàn.
             var query = context.Ban
                 .AsNoTrackingWithIdentityResolution()
                 .GetWithIncludes()
@@ -153,6 +158,7 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
         }
 
         Bans = new ObservableCollection<BanItemViewModel>(tempList);
+        // B3: Kết thúc
     }
 
     [RelayCommand]

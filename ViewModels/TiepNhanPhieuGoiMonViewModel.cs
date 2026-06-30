@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +13,7 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public partial class TiepNhanPhieuGoiMonViewModel : ControlTableViewModelBase
+public partial class TiepNhanPhieuGoiMonViewModel : InMemoryPaginatedViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
@@ -36,7 +35,7 @@ public partial class TiepNhanPhieuGoiMonViewModel : ControlTableViewModelBase
     private string _selectedMaTrangThai = "";
 
     [ObservableProperty]
-    private DateTime _thoiGianGoi = DateTime.Now;
+    private System.DateTime _thoiGianGoi = System.DateTime.Now;
 
     [ObservableProperty]
     private string _tongTienTamTinhText = "0 VND";
@@ -76,7 +75,7 @@ public partial class TiepNhanPhieuGoiMonViewModel : ControlTableViewModelBase
         SelectedMaBan = null;
         SelectedMaNhanVien = null;
         SelectedMaTrangThai = "";
-        ThoiGianGoi = DateTime.Now;
+        ThoiGianGoi = System.DateTime.Now;
         TongTienTamTinhText = "0 VND";
         SelectedOrderDetail = null;
         OrderDetails.Clear();
@@ -132,12 +131,8 @@ public partial class TiepNhanPhieuGoiMonViewModel : ControlTableViewModelBase
         TotalItems = OrderDetails.Count;
         UpdatePaginationInfo();
 
-        PagedItems.Clear();
-        var pageElements = OrderDetails.GetPage(PageNumber, PageSize);
-        foreach (var item in pageElements)
-        {
-            PagedItems.Add(item);
-        }
+        var pageElements = OrderDetails.GetPage(PageNumber, PageSize).ToList();
+        PagedItems = new ObservableCollection<CTGoiMonItemViewModel>(pageElements);
     }
 
     [RelayCommand]
@@ -155,7 +150,7 @@ public partial class TiepNhanPhieuGoiMonViewModel : ControlTableViewModelBase
         rowVm.OnItemChanged += RecalculateTotal;
         OrderDetails.Add(rowVm);
 
-        int targetPage = (int)Math.Ceiling((double)OrderDetails.Count / PageSize);
+        int targetPage = (int)System.Math.Ceiling((double)OrderDetails.Count / PageSize);
         if (PageNumber != targetPage)
         {
             PageNumber = targetPage;
@@ -266,7 +261,7 @@ public partial class TiepNhanPhieuGoiMonViewModel : ControlTableViewModelBase
             {
                 await GenerateNextMaPhieuGoiMonAsync();
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 MessageBox.Show($"Lỗi lưu cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
