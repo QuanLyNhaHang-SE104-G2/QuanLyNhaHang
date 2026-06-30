@@ -47,7 +47,7 @@ public class AppDbContext: DbContext
         );
 
         modelBuilder.Entity<ThamSo>().HasData(
-            new ThamSo { Id = 1, SoChoNgoiToiThieu = 2, TrangThaiThanhToan = "DangCheBien,DaPhucVu" }
+            new ThamSo { Id = 1, SoChoNgoiToiThieu = 2 }
         );
 
         modelBuilder.Entity<LoaiMonAn>().HasData(
@@ -81,10 +81,10 @@ public class AppDbContext: DbContext
         );
 
         modelBuilder.Entity<TrangThai>().HasData(
-            new TrangThai { MaTrangThai = "ChoBep", TenTrangThai = "Chờ bếp" },
-            new TrangThai { MaTrangThai = "DangCheBien", TenTrangThai = "Đang chế biến" },
-            new TrangThai { MaTrangThai = "DaPhucVu", TenTrangThai = "Đã phục vụ" },
-            new TrangThai { MaTrangThai = "Huy", TenTrangThai = "Huỷ" }
+            new TrangThai { MaTrangThai = "ChoBep", TenTrangThai = "Chờ bếp", DuocThanhToan = false },
+            new TrangThai { MaTrangThai = "DangCheBien", TenTrangThai = "Đang chế biến", DuocThanhToan = true },
+            new TrangThai { MaTrangThai = "DaPhucVu", TenTrangThai = "Đã phục vụ", DuocThanhToan = true },
+            new TrangThai { MaTrangThai = "Huy", TenTrangThai = "Huỷ", DuocThanhToan = false }
         );
 
 
@@ -133,18 +133,14 @@ public class AppDbContext: DbContext
     }
 
     /// <summary>
-    /// Gets the list of allowed status codes for checkout (TrangThaiThanhToan) from THAMSO, defaulting to DangCheBien, DaPhucVu if missing.
+    /// Gets the list of allowed status codes for checkout (TrangThaiThanhToan) from TRANGTHAI.
     /// </summary>
     public async Task<List<string>> GetTrangThaiThanhToanAsync()
     {
-        var thamSo = await ThamSo.AsNoTracking().FirstOrDefaultAsync();
-        var val = thamSo?.TrangThaiThanhToan;
-        if (string.IsNullOrWhiteSpace(val))
-        {
-            return ["DangCheBien", "DaPhucVu"];
-        }
-        return val
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .ToList();
+        return await TrangThai
+            .AsNoTracking()
+            .Where(t => t.DuocThanhToan)
+            .Select(t => t.MaTrangThai)
+            .ToListAsync();
     }
 }

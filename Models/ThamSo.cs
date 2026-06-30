@@ -12,7 +12,4 @@ public class ThamSo
 
     [Column("SoChoNgoiToiThieu")]
     public int SoChoNgoiToiThieu { get; set; }
-
-    [Column("TrangThaiThanhToan")]
-    public string TrangThaiThanhToan { get; set; } = "DangCheBien,DaPhucVu";
 }

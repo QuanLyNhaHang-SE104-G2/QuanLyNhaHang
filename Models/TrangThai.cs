@@ -12,4 +12,7 @@ public class TrangThai
 
     [Column("TenTrangThai")]
     public string TenTrangThai { get; set; } = null!;
+
+    [Column("DuocThanhToan")]
+    public bool DuocThanhToan { get; set; }
 }

@@ -33,28 +33,35 @@ public partial class App : Application
             options => options
                 .UseSqlite(connString));
 
-        // Sprint 1: Ban
+        // Dialog Service
         services.AddSingleton<IDialogService, DialogService>();
+        // Sprint 1, 3: Ban, Tra cuu ban
         services.AddTransient<SoDoBanViewModel>();
         services.AddTransient<TiepNhanBanAnViewModel>();
         // Sprint 2: Mon an
         services.AddTransient<MonAnViewModel>();
         services.AddTransient<TiepNhanMonAnViewModel>();
         services.AddTransient<TraCuuBanAnViewModel>();
-        // Sprint 3: Phieu goi mon
+        // Sprint 4: Phieu goi mon
         services.AddTransient<OrderViewModel>();
         services.AddTransient<TiepNhanPhieuGoiMonViewModel>();
         services.AddTransient<TraCuuPhieuGoiMonViewModel>();
-        // Sprint 5: Bao cao doanh thu
+        // Sprint 6: Bao cao doanh thu
         services.AddTransient<BaoCaoDoanhThuTheoNgayViewModel>();
         services.AddTransient<BaoCaoDoanhThuTheoMonAnViewModel>();
         services.AddTransient<BaoCaoViewModel>();
-        // Sprint 4: Hoa don
+        // Sprint 5: Hoa don
         services.AddTransient<HoaDonViewModel>();
         services.AddTransient<TiepNhanHoaDonViewModel>();
         services.AddTransient<TraCuuHoaDonViewModel>();
+        // Sprint 7: Quy dinh
+        services.AddTransient<QuyDinh1ViewModel>();
+        services.AddTransient<QuyDinh3ViewModel>();
+        services.AddTransient<QuyDinh5ViewModel>();
+        services.AddTransient<QuyDinhViewModel>();
         // Main window
         services.AddTransient<MainViewModel>();
+
         return services.BuildServiceProvider(
             new ServiceProviderOptions
             {

@@ -11,6 +11,7 @@ public partial class MainViewModel : ObservableObject
     private readonly MonAnViewModel _monAnViewModel;
     private readonly HoaDonViewModel _hoaDonViewModel;
     private readonly BaoCaoViewModel _baoCaoViewModel;
+    private readonly QuyDinhViewModel _quyDinhViewModel;
 
     [ObservableProperty]
     private object? _currentViewModel;
@@ -30,18 +31,23 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool _isHoaDonActive;
 
+    [ObservableProperty]
+    private bool _isQuyDinhActive;
+
     public MainViewModel(
         SoDoBanViewModel soDoBanViewModel, 
         OrderViewModel orderViewModel, 
         MonAnViewModel monAnViewModel,
         HoaDonViewModel hoaDonViewModel,
-        BaoCaoViewModel baoCaoViewModel)
+        BaoCaoViewModel baoCaoViewModel,
+        QuyDinhViewModel quyDinhViewModel)
     {
         _soDoBanViewModel = soDoBanViewModel;
         _orderViewModel = orderViewModel;
         _monAnViewModel = monAnViewModel;
         _hoaDonViewModel = hoaDonViewModel;
         _baoCaoViewModel = baoCaoViewModel;
+        _quyDinhViewModel = quyDinhViewModel;
         CurrentViewModel = _soDoBanViewModel;
     }
 
@@ -54,6 +60,7 @@ public partial class MainViewModel : ObservableObject
         IsPosActive = false;
         IsBaoCaoActive = false;
         IsHoaDonActive = false;
+        IsQuyDinhActive = false;
         _soDoBanViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
@@ -66,6 +73,7 @@ public partial class MainViewModel : ObservableObject
         IsPosActive = true;
         IsBaoCaoActive = false;
         IsHoaDonActive = false;
+        IsQuyDinhActive = false;
         _orderViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
@@ -78,6 +86,7 @@ public partial class MainViewModel : ObservableObject
         IsPosActive = false;
         IsBaoCaoActive = false;
         IsHoaDonActive = false;
+        IsQuyDinhActive = false;
         _monAnViewModel.LoadDataAsync().SafeFireAndForget();
     }
 
@@ -90,6 +99,7 @@ public partial class MainViewModel : ObservableObject
         IsPosActive = false;
         IsBaoCaoActive = true;
         IsHoaDonActive = false;
+        IsQuyDinhActive = false;
         _baoCaoViewModel.LoadAllData();
     }
 
@@ -102,6 +112,20 @@ public partial class MainViewModel : ObservableObject
         IsPosActive = false;
         IsBaoCaoActive = false;
         IsHoaDonActive = true;
+        IsQuyDinhActive = false;
         _hoaDonViewModel.LoadDataAsync().SafeFireAndForget();
+    }
+
+    [RelayCommand]
+    private void NavigateToQuyDinh()
+    {
+        CurrentViewModel = _quyDinhViewModel;
+        IsSoDoBanActive = false;
+        IsThucDonActive = false;
+        IsPosActive = false;
+        IsBaoCaoActive = false;
+        IsHoaDonActive = false;
+        IsQuyDinhActive = true;
+        _quyDinhViewModel.LoadAllData();
     }
 }
