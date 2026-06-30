@@ -109,6 +109,9 @@ public class DialogService : IDialogService
     public void ShowTraCuuBanAnDialog(Window? owner)
         => ShowDialogNoResult<TraCuuBanAnWindow, TraCuuBanAnViewModel>(owner);
 
+    public void ShowTraCuuMonAnDialog(Window? owner)
+        => ShowDialogNoResult<TraCuuMonAnWindow, TraCuuMonAnViewModel>(owner);
+
     public bool? ShowTiepNhanPhieuGoiMonDialog(Window? owner)
         => ShowDialog<TiepNhanPhieuGoiMonWindow, TiepNhanPhieuGoiMonViewModel>(owner);
 

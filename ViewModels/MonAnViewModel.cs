@@ -135,4 +135,10 @@ public partial class MonAnViewModel : PaginatedViewModelBase
             await LoadDataAsync();
         }
     }
+
+    [RelayCommand]
+    private void SearchMonAn(System.Windows.Window? owner)
+    {
+        _dialogService.ShowTraCuuMonAnDialog(owner);
+    }
 }

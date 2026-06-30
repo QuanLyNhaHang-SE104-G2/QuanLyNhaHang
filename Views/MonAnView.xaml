@@ -33,7 +33,8 @@
                         <TextBlock Text="Sửa" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button Content="Tra cứu" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"/>
+                <Button Content="Tra cứu" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"
+                        Command="{Binding SearchMonAnCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
             </StackPanel>
         </controls:PaginatedView.ButtonContent>
 

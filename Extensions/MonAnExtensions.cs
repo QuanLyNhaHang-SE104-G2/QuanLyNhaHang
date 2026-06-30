@@ -36,4 +36,45 @@ public static class MonAnExtensions
             .Where(q => q.MaLoaiMonAn == maLoaiMonAn)
             .Select(q => q.DonViTinh);
     }
+
+    public static IQueryable<MonAn> Filter(
+        this IQueryable<MonAn> query,
+        int? maMonAn,
+        string? tenMonAn,
+        string? maLoaiMonAn,
+        string? maDonViTinh,
+        string? maTinhTrang,
+        long? minPrice,
+        long? maxPrice)
+    {
+        if (maMonAn.HasValue)
+        {
+            query = query.Where(m => m.MaMonAn == maMonAn.Value);
+        }
+        if (!string.IsNullOrWhiteSpace(tenMonAn))
+        {
+            query = query.Where(m => m.TenMonAn.Contains(tenMonAn));
+        }
+        if (!string.IsNullOrWhiteSpace(maLoaiMonAn) && maLoaiMonAn != "All")
+        {
+            query = query.Where(m => m.MaLoaiMonAn == maLoaiMonAn);
+        }
+        if (!string.IsNullOrWhiteSpace(maDonViTinh) && maDonViTinh != "All")
+        {
+            query = query.Where(m => m.MaDonViTinh == maDonViTinh);
+        }
+        if (!string.IsNullOrWhiteSpace(maTinhTrang) && maTinhTrang != "All")
+        {
+            query = query.Where(m => m.MaTinhTrang == maTinhTrang);
+        }
+        if (minPrice.HasValue)
+        {
+            query = query.Where(m => m.DonGia >= minPrice.Value);
+        }
+        if (maxPrice.HasValue)
+        {
+            query = query.Where(m => m.DonGia <= maxPrice.Value);
+        }
+        return query;
+    }
 }
