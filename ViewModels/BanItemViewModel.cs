@@ -27,4 +27,10 @@ public partial class BanItemViewModel : ObservableObject
 
     [ObservableProperty]
     private string _phuThuText = "";
+
+    [ObservableProperty]
+    private bool _isReadOnly = true;
+
+    [ObservableProperty]
+    private string _selectedMaLoaiBan = "";
 }

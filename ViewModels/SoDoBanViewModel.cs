@@ -90,9 +90,10 @@ public partial class SoDoBanViewModel : PaginatedViewModelBase
     }
 
     [RelayCommand]
-    private void SearchTable(System.Windows.Window? owner)
+    private async Task SearchTableAsync(System.Windows.Window? owner)
     {
         _dialogService.ShowTraCuuBanAnDialog(owner);
+        await LoadDataAsync();
     }
 
     [RelayCommand(CanExecute = nameof(CanDeleteOrEdit))]

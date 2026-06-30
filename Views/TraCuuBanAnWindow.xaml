@@ -127,25 +127,127 @@
             PageNumbers="{Binding PageNumbers}">
             
             <controls:PaginatedView.MainContent>
-                <DataGrid ItemsSource="{Binding Bans}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
+                <DataGrid ItemsSource="{Binding Bans}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="False" Style="{StaticResource GeneralDataGrid}"
                           ScrollViewer.CanContentScroll="True"
                           ScrollViewer.VerticalScrollBarVisibility="Auto"
                           ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    <DataGrid.Resources>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource InputTextBox}">
+                            <Style.Triggers>
+                                <Trigger Property="IsReadOnly" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}"/>
-                        <DataGridTextColumn Header="TÊN BÀN" Width="*" Binding="{Binding TenBan}"/>
-                        <DataGridTextColumn Header="LOẠI BÀN" Width="120" Binding="{Binding TenLoaiBan}"/>
-                        <DataGridTextColumn Header="KHU VỰC" Width="150" Binding="{Binding KhuVuc}"/>
-                        <DataGridTextColumn Header="SỐ CHỖ NGỒI" Width="120" Binding="{Binding SoChoNgoiText}"/>
-                        <DataGridTextColumn Header="PHỤ THU" Width="120" Binding="{Binding PhuThuText}"/>
+                        <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Header="TÊN BÀN" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding TenBan, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="LOẠI BÀN" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding TenLoaiBan}" VerticalAlignment="Center" Margin="5,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsReadOnly}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <ComboBox VerticalAlignment="Center" Margin="2"
+                                                  ItemsSource="{Binding DataContext.ActiveLoaiBans, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                  SelectedValue="{Binding SelectedMaLoaiBan, UpdateSourceTrigger=PropertyChanged}"
+                                                  DisplayMemberPath="TenLoaiBan"
+                                                  SelectedValuePath="MaLoaiBan">
+                                            <ComboBox.Style>
+                                                <Style TargetType="ComboBox" BasedOn="{StaticResource InputComboBox}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsReadOnly}" Value="False">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ComboBox.Style>
+                                        </ComboBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="KHU VỰC" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding KhuVuc, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="SỐ CHỖ NGỒI" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock Text="{Binding SoChoNgoiText}" VerticalAlignment="Center" Margin="5,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsReadOnly}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBox Text="{Binding SoChoNgoi, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox" BasedOn="{StaticResource InputTextBox}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsReadOnly}" Value="False">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="PHỤ THU" Width="120" Binding="{Binding PhuThuText}" IsReadOnly="True"/>
                         <DataGridTemplateColumn Header="THAO TÁC" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Style="{StaticResource ButtonSecondary}" Margin="0,0,5,0" Padding="5" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextSecondaryBrush}">
-                                            <fa:IconBlock Icon="Edit" FontSize="14"/>
+                                        <Button Style="{StaticResource ButtonSecondary}" Margin="0,0,5,0" Padding="5" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextSecondaryBrush}"
+                                                Command="{Binding DataContext.EditBanCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding}">
+                                            <fa:IconBlock FontSize="14">
+                                                <fa:IconBlock.Style>
+                                                    <Style TargetType="fa:IconBlock">
+                                                        <Setter Property="Icon" Value="Edit"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsReadOnly}" Value="False">
+                                                                <Setter Property="Icon" Value="Check"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </fa:IconBlock.Style>
+                                            </fa:IconBlock>
                                         </Button>
-                                        <Button Style="{StaticResource ButtonDanger}" Padding="5" Background="Transparent" BorderThickness="0" Foreground="{StaticResource DangerBrush}">
+                                        <Button Style="{StaticResource ButtonDanger}" Padding="5" Background="Transparent" BorderThickness="0" Foreground="{StaticResource DangerBrush}"
+                                                Command="{Binding DataContext.DeleteBanCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding}">
                                             <fa:IconBlock Icon="Trash" FontSize="14"/>
                                         </Button>
                                     </StackPanel>

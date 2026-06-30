@@ -13,6 +13,8 @@ using QuanLyNhaHang.Models;
 
 namespace QuanLyNhaHang.ViewModels;
 
+// Bước 1: Nhận D1 (D1: Mã bàn, Phụ thu, Thời gian thanh toán, Tổng tiền,
+// Danh sách các món ăn có trong hóa đơn thanh toán) từ người dùng.
 public partial class TiepNhanHoaDonViewModel : InMemoryPaginatedViewModelBase
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
@@ -87,6 +89,7 @@ public partial class TiepNhanHoaDonViewModel : InMemoryPaginatedViewModelBase
                 .Distinct()
                 .ToListAsync();
 
+            // Bước 2: Đọc D2 (D2: danh sách bàn ăn) từ CSDL bàn.
             Bans = await context.Ban
                 .AsNoTracking()
                 .Where(b => eligibleTableIds.Contains(b.MaBan))
@@ -145,6 +148,13 @@ public partial class TiepNhanHoaDonViewModel : InMemoryPaginatedViewModelBase
 
         var allowedStates = await GetAllowedTrangThaisForPaymentAsync(context);
 
+        // Bước 6: Đọc D4 (D4: Danh sách phiếu gọi món) từ CSDL phiếu gọi món.
+        // Bước 7: Kiểm tra tồn tại ít nhất 1 phiếu gọi món có trạng thái
+        // Đang chế biến hoặc Đã phục vụ (D4) ứng với "mã bàn" (D1) và chưa được thanh toán.
+        // Nếu không thì tới bước 11.
+        // Bước 8: Đọc D3 (D3: Danh sách món ăn) từ D4
+        // Bước 9: Kiểm tra "tên món ăn" (D1) có thuộc D3 hay không? Nếu không thì tới bước 11.
+        // Không cần đọc. Chúng ta query trực tiếp qua bảng liên kết với phiếu gọi món.
         var orders = await context.PhieuGoiMon
             .Include(p => p.CTGoiMons)
                 .ThenInclude(ct => ct.MonAn)
@@ -205,18 +215,21 @@ public partial class TiepNhanHoaDonViewModel : InMemoryPaginatedViewModelBase
     [RelayCommand]
     private async Task AcceptAsync(Window? window)
     {
+        // Bước 3: Kiểm tra "mã bàn" (D1) có thuộc D2 hay không? Nếu không thuộc thì tới bước 11.
         ValidateAllProperties();
 
         if (HasErrors)
         {
             var errors = GetErrors().Select(e => e.ErrorMessage).ToList();
             MessageBox.Show(string.Join("\n", errors), "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Bước 11: Kết thúc
             return;
         }
 
         if (InvoiceDetails.Count == 0)
         {
             MessageBox.Show("Bàn này không có phiếu gọi món nào chưa thanh toán và đủ điều kiện.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+            // Bước 11: Kết thúc.
             return;
         }
 
@@ -225,6 +238,7 @@ public partial class TiepNhanHoaDonViewModel : InMemoryPaginatedViewModelBase
         {
             try
             {
+                // Bước 10: Lưu D5☰D1 xuống CSDL Hóa đơn.
                 using var context = await _dbContextFactory.CreateDbContextAsync();
 
                 var newHoaDon = new HoaDon
@@ -255,6 +269,7 @@ public partial class TiepNhanHoaDonViewModel : InMemoryPaginatedViewModelBase
                     window.DialogResult = true;
                     window.Close();
                 }
+                // Bước 11: Kết thúc.
                 return;
             }
             catch (DbUpdateException ex) when (ex.IsPrimaryKeyViolation() && attempt < maxRetries - 1)
@@ -264,6 +279,7 @@ public partial class TiepNhanHoaDonViewModel : InMemoryPaginatedViewModelBase
             catch (System.Exception ex)
             {
                 MessageBox.Show($"Lỗi lưu cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Bước 11: Kết thúc.
                 return;
             }
         }

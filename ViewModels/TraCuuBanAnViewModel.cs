@@ -53,6 +53,9 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
     [ObservableProperty]
     private ObservableCollection<BanItemViewModel> _bans = [];
 
+    [ObservableProperty]
+    private List<LoaiBan> _activeLoaiBans = [];
+
     public record LoaiBanOption(string MaLoaiBan, string TenLoaiBan);
 
     public TraCuuBanAnViewModel(IDbContextFactory<AppDbContext> dbContextFactory)
@@ -79,6 +82,11 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
 
         LoaiBans = new ObservableCollection<LoaiBanOption>(
             rawLoaiBans.Prepend(new LoaiBanOption("All", "Tất cả")));
+
+        using (var context = await _dbContextFactory.CreateDbContextAsync())
+        {
+            ActiveLoaiBans = await context.LoaiBan.AsNoTracking().OrderBy(l => l.PhuThu).ToListAsync();
+        }
 
         SelectedMaLoaiBan = "All";
 
@@ -153,7 +161,9 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
                 SoChoNgoi = ban.SoChoNgoi,
                 SoChoNgoiText = $"{ban.SoChoNgoi} khách",
                 TenLoaiBan = ban.LoaiBan?.TenLoaiBan ?? "",
-                PhuThuText = $"{(ban.LoaiBan?.PhuThu ?? 0):N0} VND"
+                PhuThuText = $"{(ban.LoaiBan?.PhuThu ?? 0):N0} VND",
+                SelectedMaLoaiBan = ban.MaLoaiBan,
+                IsReadOnly = true
             });
         }
 
@@ -167,6 +177,121 @@ public partial class TraCuuBanAnViewModel : PaginatedViewModelBase
         if (window != null)
         {
             window.Close();
+        }
+    }
+
+    [RelayCommand]
+    private async Task EditBanAsync(BanItemViewModel item)
+    {
+        if (item == null) return;
+
+        if (item.IsReadOnly)
+        {
+            item.IsReadOnly = false;
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(item.TenBan))
+            {
+                MessageBox.Show("Tên bàn ăn không được để trống.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(item.KhuVuc))
+            {
+                MessageBox.Show("Khu vực không được để trống.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (item.SoChoNgoi < 1)
+            {
+                MessageBox.Show("Số chỗ ngồi phải lớn hơn 0.", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            int minSeats = 2;
+            using (var context = await _dbContextFactory.CreateDbContextAsync())
+            {
+                minSeats = await context.GetSoChoNgoiToiThieuAsync();
+            }
+
+            if (item.SoChoNgoi < minSeats)
+            {
+                MessageBox.Show($"Số chỗ ngồi phải lớn hơn hoặc bằng số chỗ ngồi tối thiểu ({minSeats}).", "Lỗi nhập liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            try
+            {
+                using (var context = await _dbContextFactory.CreateDbContextAsync())
+                {
+                    var dbBan = await context.Ban.FirstOrDefaultAsync(b => b.MaBan == item.MaBan);
+                    if (dbBan == null)
+                    {
+                        MessageBox.Show("Không tìm thấy bàn cần cập nhật trong CSDL.", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    dbBan.TenBan = item.TenBan;
+                    dbBan.KhuVuc = item.KhuVuc;
+                    dbBan.SoChoNgoi = item.SoChoNgoi;
+                    dbBan.MaLoaiBan = item.SelectedMaLoaiBan;
+
+                    await context.SaveChangesAsync();
+                }
+
+                using (var context = await _dbContextFactory.CreateDbContextAsync())
+                {
+                    var lb = await context.LoaiBan.AsNoTracking().FirstOrDefaultAsync(x => x.MaLoaiBan == item.SelectedMaLoaiBan);
+                    if (lb != null)
+                    {
+                        item.TenLoaiBan = lb.TenLoaiBan;
+                        item.PhuThuText = $"{lb.PhuThu:N0} VND";
+                    }
+                }
+
+                item.SoChoNgoiText = $"{item.SoChoNgoi} khách";
+                item.IsReadOnly = true;
+                MessageBox.Show("Cập nhật thông tin bàn ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi cập nhật cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeleteBanAsync(BanItemViewModel item)
+    {
+        if (item == null) return;
+
+        var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa bàn '{item.TenBan}' không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (result != MessageBoxResult.Yes) return;
+
+        try
+        {
+            using (var context = await _dbContextFactory.CreateDbContextAsync())
+            {
+                bool hasOrders = await context.PhieuGoiMon.AsNoTracking().AnyAsync(p => p.MaBan == item.MaBan);
+                if (hasOrders)
+                {
+                    MessageBox.Show($"Không thể xóa bàn '{item.TenBan}' vì bàn đang có phiếu gọi món liên kết.", "Lỗi xóa bàn ăn", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var ban = await context.Ban.FirstOrDefaultAsync(b => b.MaBan == item.MaBan);
+                if (ban != null)
+                {
+                    context.Ban.Remove(ban);
+                    await context.SaveChangesAsync();
+                }
+            }
+
+            MessageBox.Show("Xóa bàn ăn thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi xóa cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }
