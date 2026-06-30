@@ -115,6 +115,29 @@ public class DialogService : IDialogService
     public bool? ShowTiepNhanPhieuGoiMonDialog(Window? owner)
         => ShowDialog<TiepNhanPhieuGoiMonWindow, TiepNhanPhieuGoiMonViewModel>(owner);
 
+    public bool? ShowCapNhatPhieuGoiMonDialog(Window? owner, int maPhieuGoiMon)
+    {
+        var dialog = new CapNhatPhieuGoiMonWindow
+        {
+            Owner = owner ?? Application.Current.MainWindow
+        };
+        var viewModel = App.Current.Services.GetRequiredService<CapNhatPhieuGoiMonViewModel>();
+        viewModel.MaPhieuGoiMon = maPhieuGoiMon;
+        dialog.DataContext = viewModel;
+
+        try
+        {
+            return dialog.ShowDialog();
+        }
+        finally
+        {
+            if (viewModel is IDisposable disposableVM)
+            {
+                disposableVM.Dispose();
+            }
+        }
+    }
+
     public void ShowTraCuuPhieuGoiMonDialog(Window? owner)
         => ShowDialogNoResult<TraCuuPhieuGoiMonWindow, TraCuuPhieuGoiMonViewModel>(owner);
 

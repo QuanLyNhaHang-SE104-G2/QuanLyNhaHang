@@ -48,6 +48,7 @@ public partial class App : Application
         // Sprint 4: Phieu goi mon
         services.AddTransient<OrderViewModel>();
         services.AddTransient<TiepNhanPhieuGoiMonViewModel>();
+        services.AddTransient<CapNhatPhieuGoiMonViewModel>();
         services.AddTransient<TraCuuPhieuGoiMonViewModel>();
         // Sprint 6: Bao cao doanh thu
         services.AddTransient<BaoCaoDoanhThuTheoNgayViewModel>();

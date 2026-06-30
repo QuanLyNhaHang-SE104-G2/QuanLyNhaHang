@@ -21,8 +21,6 @@
                         <TextBlock Text="Thanh toán" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
-                <Button Content="Xóa" Style="{StaticResource ButtonDanger}" Margin="0,0,10,0"/>
-                <Button Content="Sửa" Style="{StaticResource ButtonSecondary}" Margin="0,0,10,0"/>
                 <Button Content="Tra cứu" Style="{StaticResource ButtonSecondary}" Command="{Binding SearchHoaDonCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,10,0"/>
             </StackPanel>
         </controls:PaginatedView.ButtonContent>

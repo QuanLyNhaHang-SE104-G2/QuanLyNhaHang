@@ -25,6 +25,13 @@ public partial class OrderViewModel : PaginatedViewModelBase
     [ObservableProperty]
     private ObservableCollection<OrderItemViewModel> _orders = [];
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(DeleteOrderCommand))]
+    [NotifyCanExecuteChangedFor(nameof(EditOrderCommand))]
+    private OrderItemViewModel? _selectedOrder;
+
+    private bool CanDeleteOrEdit => SelectedOrder != null;
+
     public OrderViewModel(IDbContextFactory<AppDbContext> dbContextFactory, IDialogService dialogService)
     {
         _dbContextFactory = dbContextFactory;
@@ -90,5 +97,65 @@ public partial class OrderViewModel : PaginatedViewModelBase
     private void SearchOrder(Window? owner)
     {
         _dialogService.ShowTraCuuPhieuGoiMonDialog(owner);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDeleteOrEdit))]
+    private async Task DeleteOrderAsync()
+    {
+        if (SelectedOrder == null) return;
+
+        var result = MessageBox.Show($"Bạn có chắc chắn muốn xóa phiếu gọi món '{SelectedOrder.MaPhieuGoiMon}' không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (result != MessageBoxResult.Yes) return;
+
+        try
+        {
+            using (var context = await _dbContextFactory.CreateDbContextAsync())
+            {
+                var order = await context.PhieuGoiMon.FirstOrDefaultAsync(p => p.MaPhieuGoiMon == SelectedOrder.MaPhieuGoiMon);
+                if (order != null)
+                {
+                    if (order.MaHoaDon.HasValue)
+                    {
+                        MessageBox.Show($"Không thể xóa phiếu gọi món '{SelectedOrder.MaPhieuGoiMon}' vì phiếu đã được thanh toán (đã xuất hóa đơn).", "Lỗi xóa phiếu gọi món", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    var details = context.CTGoiMon.Where(c => c.MaPhieuGoiMon == order.MaPhieuGoiMon);
+                    context.CTGoiMon.RemoveRange(details);
+
+                    context.PhieuGoiMon.Remove(order);
+                    await context.SaveChangesAsync();
+                }
+            }
+
+            MessageBox.Show("Xóa phiếu gọi món thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            SelectedOrder = null;
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Lỗi xóa cơ sở dữ liệu: {ex.Message}", "Lỗi hệ thống", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanDeleteOrEdit))]
+    private async Task EditOrderAsync(Window? owner)
+    {
+        if (SelectedOrder == null) return;
+
+        using (var context = await _dbContextFactory.CreateDbContextAsync())
+        {
+            var order = await context.PhieuGoiMon.AsNoTracking().FirstOrDefaultAsync(p => p.MaPhieuGoiMon == SelectedOrder.MaPhieuGoiMon);
+            if (order != null && order.MaHoaDon.HasValue)
+            {
+                MessageBox.Show($"Không thể sửa phiếu gọi món '{SelectedOrder.MaPhieuGoiMon}' vì phiếu đã được thanh toán (đã xuất hóa đơn).", "Lỗi sửa phiếu gọi món", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+        }
+
+        if (_dialogService.ShowCapNhatPhieuGoiMonDialog(owner, SelectedOrder.MaPhieuGoiMon) == true)
+        {
+            await LoadDataAsync();
+        }
     }
 }
