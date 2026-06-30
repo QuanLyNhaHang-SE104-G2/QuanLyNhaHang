@@ -82,10 +82,14 @@ def seed_database(db_path):
 
     # 5. Seed HOADON
     invoices = [
-        (1, "2026-06-29 16:00:00", 320000, 0)
+        (1, "2026-06-29 16:00:00", 320000, 0),
+        (2, "2026-06-15 11:30:00", 180000, 50000),
+        (3, "2026-06-15 19:45:00", 450000, 80000),
+        (4, "2026-06-10 14:15:00", 250000, 0),
+        (5, "2026-06-20 08:30:00", 950000, 50000)
     ]
     cursor.executemany("INSERT INTO HOADON (MaHoaDon, ThoiGianThanhToan, TongTien, PhuThu) VALUES (?, ?, ?, ?);", invoices)
-    print("Seeded 1 historical invoice.")
+    print("Seeded 5 historical invoices.")
 
     # 6. Seed PHIEUGOIMON
     orders = [
@@ -101,10 +105,21 @@ def seed_database(db_path):
         (5, 3, 1, 3, "DaPhucVu", "2026-06-29 10:00:00", 80000),
         (6, 3, 1, 3, "DaPhucVu", "2026-06-29 10:30:00", 80000),
         (7, 3, 1, 3, "DaPhucVu", "2026-06-29 11:00:00", 80000),
-        (8, 3, 1, 3, "DaPhucVu", "2026-06-29 11:15:00", 80000)
+        (8, 3, 1, 3, "DaPhucVu", "2026-06-29 11:15:00", 80000),
+
+        # Invoices 2 & 3 (June 15)
+        (9, 4, 2, 2, "DaPhucVu", "2026-06-15 10:30:00", 50000),
+        (10, 4, 2, 2, "DaPhucVu", "2026-06-15 11:00:00", 80000),
+        (11, 5, 3, 3, "DaPhucVu", "2026-06-15 18:30:00", 370000),
+
+        # Invoice 4 (June 10)
+        (12, 1, 4, 1, "DaPhucVu", "2026-06-10 13:00:00", 250000),
+
+        # Invoice 5 (June 20)
+        (13, 2, 5, 1, "DaPhucVu", "2026-06-20 07:30:00", 900000)
     ]
     cursor.executemany("INSERT INTO PHIEUGOIMON (MaPhieuGoiMon, MaBan, MaHoaDon, MaNhanVien, MaTrangThai, ThoiGianGoi, TongTienTamTinh) VALUES (?, ?, ?, ?, ?, ?, ?);", orders)
-    print("Seeded 8 order slips.")
+    print("Seeded 13 order slips.")
 
     # 7. Seed CTGOIMON
     details = [
@@ -123,10 +138,26 @@ def seed_database(db_path):
         # Slip 7
         (7, 3, 2, "", 40000),
         # Slip 8
-        (8, 4, 2, "", 40000)
+        (8, 4, 2, "", 40000),
+
+        # Slip 9 (linked to Invoice 2)
+        (9, 1, 2, "Khai vị đĩa", 25000),
+        # Slip 10 (linked to Invoice 2)
+        (10, 13, 1, "Đồ uống chai", 80000),
+
+        # Slip 11 (linked to Invoice 3)
+        (11, 5, 2, "Món chính đĩa", 110000),
+        (11, 9, 2, "Tráng miệng đĩa", 75000),
+
+        # Slip 12 (linked to Invoice 4)
+        (12, 7, 5, "Món chính phần", 50000),
+
+        # Slip 13 (linked to Invoice 5)
+        (13, 5, 4, "Món chính đĩa", 150000),
+        (13, 15, 3, "Đồ uống ly", 100000)
     ]
     cursor.executemany("INSERT INTO CTGOIMON (MaPhieuGoiMon, MaMonAn, SoLuong, GhiChu, DonGia) VALUES (?, ?, ?, ?, ?);", details)
-    print("Seeded 8 order detail items.")
+    print("Seeded 15 order detail items.")
 
     conn.commit()
     conn.close()

@@ -114,6 +114,33 @@
                         </StackPanel>
                     </Button>
 
+                    <!-- Bao cao navigation button -->
+                    <Button Command="{Binding NavigateToBaoCaoCommand}" Margin="0,5,0,0" HorizontalContentAlignment="Left" Padding="15,10" Cursor="Hand" BorderThickness="0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource ControlBaseStyle}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Style.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="6"/>
+                                    </Style>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsBaoCaoActive}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource ActiveMenuBrush}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconBlock Icon="ChartBar" FontSize="16" Width="20"/>
+                            <TextBlock Text="Báo cáo" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+
                     <!-- Hoa don thanh toan navigation button -->
                     <Button Command="{Binding NavigateToHoaDonCommand}" Margin="0,5,0,0" HorizontalContentAlignment="Left" Padding="15,10" Cursor="Hand" BorderThickness="0">
                         <Button.Style>

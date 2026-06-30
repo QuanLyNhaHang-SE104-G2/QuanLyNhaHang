@@ -10,6 +10,7 @@ public partial class MainViewModel : ObservableObject
     private readonly OrderViewModel _orderViewModel;
     private readonly MonAnViewModel _monAnViewModel;
     private readonly HoaDonViewModel _hoaDonViewModel;
+    private readonly BaoCaoViewModel _baoCaoViewModel;
 
     [ObservableProperty]
     private object? _currentViewModel;
@@ -24,18 +25,23 @@ public partial class MainViewModel : ObservableObject
     private bool _isPosActive;
 
     [ObservableProperty]
+    private bool _isBaoCaoActive;
+
+    [ObservableProperty]
     private bool _isHoaDonActive;
 
     public MainViewModel(
         SoDoBanViewModel soDoBanViewModel, 
         OrderViewModel orderViewModel, 
         MonAnViewModel monAnViewModel,
-        HoaDonViewModel hoaDonViewModel)
+        HoaDonViewModel hoaDonViewModel,
+        BaoCaoViewModel baoCaoViewModel)
     {
         _soDoBanViewModel = soDoBanViewModel;
         _orderViewModel = orderViewModel;
         _monAnViewModel = monAnViewModel;
         _hoaDonViewModel = hoaDonViewModel;
+        _baoCaoViewModel = baoCaoViewModel;
         CurrentViewModel = _soDoBanViewModel;
     }
 
@@ -46,6 +52,7 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = true;
         IsThucDonActive = false;
         IsPosActive = false;
+        IsBaoCaoActive = false;
         IsHoaDonActive = false;
         _soDoBanViewModel.LoadDataAsync().SafeFireAndForget();
     }
@@ -57,6 +64,7 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = false;
         IsThucDonActive = false;
         IsPosActive = true;
+        IsBaoCaoActive = false;
         IsHoaDonActive = false;
         _orderViewModel.LoadDataAsync().SafeFireAndForget();
     }
@@ -68,8 +76,21 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = false;
         IsThucDonActive = true;
         IsPosActive = false;
+        IsBaoCaoActive = false;
         IsHoaDonActive = false;
         _monAnViewModel.LoadDataAsync().SafeFireAndForget();
+    }
+
+    [RelayCommand]
+    private void NavigateToBaoCao()
+    {
+        CurrentViewModel = _baoCaoViewModel;
+        IsSoDoBanActive = false;
+        IsThucDonActive = false;
+        IsPosActive = false;
+        IsBaoCaoActive = true;
+        IsHoaDonActive = false;
+        _baoCaoViewModel.LoadAllData();
     }
 
     [RelayCommand]
@@ -79,6 +100,7 @@ public partial class MainViewModel : ObservableObject
         IsSoDoBanActive = false;
         IsThucDonActive = false;
         IsPosActive = false;
+        IsBaoCaoActive = false;
         IsHoaDonActive = true;
         _hoaDonViewModel.LoadDataAsync().SafeFireAndForget();
     }

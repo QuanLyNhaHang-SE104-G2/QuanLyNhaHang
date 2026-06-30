@@ -1,0 +1,152 @@
+<UserControl x:Class="QuanLyNhaHang.Views.BaoCaoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fa="clr-namespace:FontAwesome.Sharp;assembly=FontAwesome.Sharp"
+             xmlns:controls="clr-namespace:QuanLyNhaHang.Controls"
+             Background="{StaticResource BackgroundBrush}">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="20">
+                <!-- Header -->
+                <TextBlock Text="Báo cáo doanh số" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                <TextBlock Text="Tổng quan hiệu suất kinh doanh và xu hướng bán hàng." FontSize="13" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,5,0,20"/>
+
+                <!-- Card 1: Báo cáo theo ngày -->
+                <Border Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,0,0,25">
+                    <StackPanel>
+                        <TextBlock Text="BM6.2: Báo cáo doanh thu theo ngày" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,15"/>
+
+                        <!-- Inputs Row -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Năm lập báo cáo" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputTextBox}" Text="{Binding DoanhThuTheoNgay.NamBaoCao, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Column="3" Text="Tháng lập báo cáo" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="4" Style="{StaticResource InputTextBox}" Text="{Binding DoanhThuTheoNgay.ThangBaoCao, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- Total & Action Row -->
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Tổng doanh thu của nhà hàng trong tháng:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputTextBox}" IsReadOnly="True" Background="#F5F5F5" Text="{Binding DoanhThuTheoNgay.TongDoanhThuText, Mode=OneWay}"/>
+
+                            <Button Grid.Column="3" Content="Lập báo cáo doanh số" Style="{StaticResource ButtonPrimary}" Command="{Binding DoanhThuTheoNgay.LapBaoCaoCommand}"/>
+                        </Grid>
+
+                        <!-- Paginated Grid -->
+                        <controls:PaginatedView Style="{StaticResource PopupPaginatedViewStyle}"
+                            PageSize="{Binding DoanhThuTheoNgay.PageSize, Mode=TwoWay}"
+                            PageNumber="{Binding DoanhThuTheoNgay.PageNumber, Mode=TwoWay}"
+                            TotalInfoText="{Binding DoanhThuTheoNgay.TotalInfoText}"
+                            PrevPageCommand="{Binding DoanhThuTheoNgay.PrevPageCommand}"
+                            NextPageCommand="{Binding DoanhThuTheoNgay.NextPageCommand}"
+                            PageSizes="{Binding DoanhThuTheoNgay.PageSizes}"
+                            PageNumbers="{Binding DoanhThuTheoNgay.PageNumbers}">
+                            <controls:PaginatedView.MainContent>
+                                <DataGrid ItemsSource="{Binding DoanhThuTheoNgay.PagedItems}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
+                                          Height="300"
+                                          Validation.ErrorTemplate="{x:Null}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}"/>
+                                        <DataGridTextColumn Header="NGÀY" Width="*" Binding="{Binding NgayText}"/>
+                                        <DataGridTextColumn Header="DOANH THU" Width="*" Binding="{Binding DoanhThuText}"/>
+                                        <DataGridTextColumn Header="TỶ LỆ" Width="120" Binding="{Binding TyLeText}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </controls:PaginatedView.MainContent>
+                        </controls:PaginatedView>
+                    </StackPanel>
+                </Border>
+
+                <!-- Card 2: Báo cáo theo món ăn -->
+                <Border Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,0,0,25">
+                    <StackPanel>
+                        <TextBlock Text="BM6.1: Báo cáo doanh thu theo món ăn" FontSize="16" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,15"/>
+
+                        <!-- Inputs Row -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="180"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Năm lập báo cáo" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputTextBox}" Text="{Binding DoanhThuTheoMonAn.NamBaoCao, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Column="3" Text="Tháng lập báo cáo" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="4" Style="{StaticResource InputTextBox}" Text="{Binding DoanhThuTheoMonAn.ThangBaoCao, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Column="6" Text="Tên loại món ăn" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+                            <ComboBox Grid.Column="7" Style="{StaticResource InputComboBox}" 
+                                      ItemsSource="{Binding DoanhThuTheoMonAn.Categories}"
+                                      SelectedValue="{Binding DoanhThuTheoMonAn.SelectedMaLoaiMonAn}"
+                                      SelectedValuePath="MaLoaiMonAn"
+                                      DisplayMemberPath="TenLoaiMonAn"/>
+                        </Grid>
+
+                        <!-- Total & Action Row -->
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Tổng doanh thu của loại món ăn trong tháng:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="SemiBold"/>
+                            <TextBox Grid.Column="1" Style="{StaticResource InputTextBox}" IsReadOnly="True" Background="#F5F5F5" Text="{Binding DoanhThuTheoMonAn.TongDoanhThuText, Mode=OneWay}"/>
+
+                            <Button Grid.Column="3" Content="Lập báo cáo doanh số" Style="{StaticResource ButtonPrimary}" Command="{Binding DoanhThuTheoMonAn.LapBaoCaoCommand}"/>
+                        </Grid>
+
+                        <!-- Paginated Grid -->
+                        <controls:PaginatedView Style="{StaticResource PopupPaginatedViewStyle}"
+                            PageSize="{Binding DoanhThuTheoMonAn.PageSize, Mode=TwoWay}"
+                            PageNumber="{Binding DoanhThuTheoMonAn.PageNumber, Mode=TwoWay}"
+                            TotalInfoText="{Binding DoanhThuTheoMonAn.TotalInfoText}"
+                            PrevPageCommand="{Binding DoanhThuTheoMonAn.PrevPageCommand}"
+                            NextPageCommand="{Binding DoanhThuTheoMonAn.NextPageCommand}"
+                            PageSizes="{Binding DoanhThuTheoMonAn.PageSizes}"
+                            PageNumbers="{Binding DoanhThuTheoMonAn.PageNumbers}">
+                            <controls:PaginatedView.MainContent>
+                                <DataGrid ItemsSource="{Binding DoanhThuTheoMonAn.PagedItems}" IsReadOnly="True" Style="{StaticResource GeneralDataGrid}"
+                                          Height="300"
+                                          Validation.ErrorTemplate="{x:Null}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="STT" Width="60" Binding="{Binding STT}"/>
+                                        <DataGridTextColumn Header="TÊN MÓN ĂN" Width="*" Binding="{Binding TenMonAn}"/>
+                                        <DataGridTextColumn Header="DOANH THU" Width="*" Binding="{Binding DoanhThuText}"/>
+                                        <DataGridTextColumn Header="TỶ LỆ" Width="120" Binding="{Binding TyLeText}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </controls:PaginatedView.MainContent>
+                        </controls:PaginatedView>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
