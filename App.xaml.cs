@@ -55,9 +55,10 @@ public partial class App : Application
         services.AddTransient<TiepNhanHoaDonViewModel>();
         services.AddTransient<TraCuuHoaDonViewModel>();
         // Sprint 7: Quy dinh
-        services.AddTransient<QuyDinh1ViewModel>();
-        services.AddTransient<QuyDinh3ViewModel>();
-        services.AddTransient<QuyDinh5ViewModel>();
+        services.AddTransient<QuyDinhBanAnViewModel>();
+        services.AddTransient<QuyDinhLoaiMonAnViewModel>();
+        services.AddTransient<QuyDinhDonViTinhViewModel>();
+        services.AddTransient<QuyDinhTrangThaiThanhToanViewModel>();
         services.AddTransient<QuyDinhViewModel>();
         // Main window
         services.AddTransient<MainViewModel>();

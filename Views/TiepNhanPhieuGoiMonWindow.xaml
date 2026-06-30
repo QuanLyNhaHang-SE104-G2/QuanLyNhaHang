@@ -76,7 +76,7 @@
         <!-- Detail Grid Table (ControlTable) -->
         <controls:ControlTable Grid.Row="2" Margin="0,0,0,15"
                                VerticalAlignment="Stretch"
-                               DishesSource="{Binding ActiveMonAns}"
+                               AddRowButtonText="Thêm món"
                                ItemsSource="{Binding PagedItems}"
                                SelectedItem="{Binding SelectedOrderDetail}"
                                AddRowCommand="{Binding AddRowCommand}"
@@ -109,7 +109,7 @@
                             <DataTemplate>
                                 <ComboBox Style="{StaticResource InputComboBox}"
                                           VerticalAlignment="Center" Margin="2"
-                                          ItemsSource="{Binding DishesSource, RelativeSource={RelativeSource AncestorType={x:Type controls:ControlTable}}}"
+                                          ItemsSource="{Binding DataContext.ActiveMonAns, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                                           SelectedValue="{Binding SelectedMaMonAn, UpdateSourceTrigger=PropertyChanged}"
                                           DisplayMemberPath="TenMonAn"
                                           SelectedValuePath="MaMonAn"/>

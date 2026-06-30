@@ -10,7 +10,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Styles/GeneralStyles.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/Styles/PaginatedViewStyle.xaml"/>
-                <ResourceDictionary Source="pack://application:,,,/Styles/ControlTableStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Styles/InMemoryPaginatedViewStyle.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Styles/EditablePaginatedViewStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type vm:SoDoBanViewModel}">

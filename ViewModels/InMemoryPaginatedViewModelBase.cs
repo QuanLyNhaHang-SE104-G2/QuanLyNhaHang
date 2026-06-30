@@ -1,12 +1,10 @@
-using System;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using QuanLyNhaHang.Extensions;
 
 namespace QuanLyNhaHang.ViewModels;
 
-public abstract partial class ControlTableViewModelBase : ObservableValidator
+public abstract partial class InMemoryPaginatedViewModelBase : ObservableValidator
 {
     [ObservableProperty]
     private int _pageSize = 10;
@@ -21,10 +19,9 @@ public abstract partial class ControlTableViewModelBase : ObservableValidator
     private string _totalInfoText = "";
 
     [ObservableProperty]
-    private ObservableCollection<int> _pageNumbers = [];
+    private System.Collections.ObjectModel.ObservableCollection<int> _pageNumbers = [];
 
     public int[] PageSizes { get; } = [10, 25, 50, 100];
-
     protected virtual string EntityLabel => "mục";
 
     [RelayCommand]
@@ -39,7 +36,7 @@ public abstract partial class ControlTableViewModelBase : ObservableValidator
     [RelayCommand]
     private void NextPage()
     {
-        int totalPages = (int)Math.Ceiling((double)TotalItems / PageSize);
+        int totalPages = (int)System.Math.Ceiling((double)TotalItems / PageSize);
         if (totalPages < 1) totalPages = 1;
         if (PageNumber < totalPages)
         {
@@ -47,10 +44,9 @@ public abstract partial class ControlTableViewModelBase : ObservableValidator
         }
     }
 
-    // Refactored to accept an external count dynamically
     protected void UpdatePaginationInfo()
     {
-        int totalPages = (int)Math.Ceiling((double)TotalItems / PageSize);
+        int totalPages = (int)System.Math.Ceiling((double)TotalItems / PageSize);
         if (totalPages < 1) totalPages = 1;
 
         int currentCount = PageNumbers.Count;
@@ -79,7 +75,7 @@ public abstract partial class ControlTableViewModelBase : ObservableValidator
         }
 
         int start = TotalItems == 0 ? 0 : (PageNumber - 1) * PageSize + 1;
-        int end = Math.Min(PageNumber * PageSize, TotalItems);
+        int end = System.Math.Min(PageNumber * PageSize, TotalItems);
         TotalInfoText = $"Hiển thị {start}-{end} trên tổng số {TotalItems} {EntityLabel}";
     }
 
