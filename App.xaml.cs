@@ -67,6 +67,7 @@ public partial class App : Application
         services.AddTransient<QuyDinhLoaiMonAnViewModel>();
         services.AddTransient<QuyDinhDonViTinhViewModel>();
         services.AddTransient<QuyDinhTrangThaiThanhToanViewModel>();
+        services.AddTransient<QuyDinhLoaiMonAnDvtViewModel>();
         services.AddTransient<QuyDinhViewModel>();
         // Main window
         services.AddTransient<MainViewModel>();

@@ -9,17 +9,20 @@ public partial class QuyDinhViewModel : ObservableObject
     public QuyDinhLoaiMonAnViewModel QuyDinhLoaiMonAn { get; }
     public QuyDinhDonViTinhViewModel QuyDinhDonViTinh { get; }
     public QuyDinhTrangThaiThanhToanViewModel QuyDinhTrangThaiThanhToan { get; }
+    public QuyDinhLoaiMonAnDvtViewModel QuyDinhLoaiMonAnDvt { get; }
 
     public QuyDinhViewModel(
         QuyDinhBanAnViewModel quyDinhBanAn,
         QuyDinhLoaiMonAnViewModel quyDinhLoaiMonAn,
         QuyDinhDonViTinhViewModel quyDinhDonViTinh,
-        QuyDinhTrangThaiThanhToanViewModel quyDinhTrangThaiThanhToan)
+        QuyDinhTrangThaiThanhToanViewModel quyDinhTrangThaiThanhToan,
+        QuyDinhLoaiMonAnDvtViewModel quyDinhLoaiMonAnDvt)
     {
         QuyDinhBanAn = quyDinhBanAn;
         QuyDinhLoaiMonAn = quyDinhLoaiMonAn;
         QuyDinhDonViTinh = quyDinhDonViTinh;
         QuyDinhTrangThaiThanhToan = quyDinhTrangThaiThanhToan;
+        QuyDinhLoaiMonAnDvt = quyDinhLoaiMonAnDvt;
     }
 
     public void LoadAllData()
@@ -28,5 +31,6 @@ public partial class QuyDinhViewModel : ObservableObject
         QuyDinhLoaiMonAn.InitializeFormAsync().SafeFireAndForget();
         QuyDinhDonViTinh.InitializeFormAsync().SafeFireAndForget();
         QuyDinhTrangThaiThanhToan.InitializeFormAsync().SafeFireAndForget();
+        QuyDinhLoaiMonAnDvt.InitializeFormAsync().SafeFireAndForget();
     }
 }
